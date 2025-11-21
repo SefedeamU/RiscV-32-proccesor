@@ -16,7 +16,7 @@ module data_mem (
     wire [11:0] word_addr;
     assign word_addr = addr[13:2];
 
-    // Lectura síncrona
+    // Lectura sÃ­ncrona + escritura por byte
     always @(posedge clk) begin
         rdata <= ram[word_addr];
 

@@ -1,12 +1,12 @@
 // =============================================================
 // simd_accel.v -- Stub del acelerador SIMD (Verilog-2005)
-// Se implementar· en las Fases 5-6.
+// Se implementar√° en las Fases 5-6.
 // =============================================================
 module simd_accel (
     input wire clk,
     input wire reset
 );
 
-    // LÛgica del acelerador SIMD se agregar· m·s adelante.
+    // L√≥gica del acelerador SIMD se agregar√° m√°s adelante.
 
 endmodule

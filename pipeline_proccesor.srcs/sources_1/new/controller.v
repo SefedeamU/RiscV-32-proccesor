@@ -23,7 +23,7 @@ module controller (
     localparam ALU_AND = 4'b0010;
     localparam ALU_OR  = 4'b0011;
     localparam ALU_XOR = 4'b0100;
-    localparam ALU_SLT = 4'b0101;
+    localparam ALU_SLT = 4'b0101;  // reservado si luego quieres SLT
 
     always @(*) begin
         // Valores por defecto (NOP)
@@ -43,7 +43,7 @@ module controller (
             // -------------------------------------------------
             7'b1100011: begin
                 is_branch = 1'b1;
-                alu_ctrl  = ALU_SUB; // comparación
+                alu_ctrl  = ALU_SUB; // comparaciÃ³n
             end
 
             // -------------------------------------------------
@@ -57,13 +57,12 @@ module controller (
                     10'b0000000_111: alu_ctrl = ALU_AND; // AND
                     10'b0000000_110: alu_ctrl = ALU_OR;  // OR
                     10'b0000000_100: alu_ctrl = ALU_XOR; // XOR
-                    // Se pueden agregar más (SLL, SRL, SLT...)
                     default:          alu_ctrl = ALU_ADD;
                 endcase
             end
 
             // -------------------------------------------------
-            // I-TYPE aritmético-lógicas: ADDI, ANDI, ORI
+            // I-TYPE aritmÃ©tico-lÃ³gicas: ADDI, ANDI, ORI
             // -------------------------------------------------
             7'b0010011: begin
                 alu_src   = 1'b1;  // usar inmediato

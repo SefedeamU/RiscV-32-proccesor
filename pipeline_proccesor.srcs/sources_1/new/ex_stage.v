@@ -1,6 +1,6 @@
 // =============================================================
 // ex_stage.v -- Updated Fase 3.5 (Verilog-2005)
-// Ahora también maneja JAL (is_jal + imm_j).
+// Ahora tambiÃ©n maneja JAL (is_jal + imm_j).
 // =============================================================
 module ex_stage (
     // From ID/EX pipeline
@@ -73,7 +73,7 @@ module ex_stage (
     // ------------------------------
     always @(*) begin
         branch_taken  = 1'b0;
-        branch_target = pc + imm_b; // por defecto, target de branch
+        branch_target = pc + imm_b; // por defecto, target de branch condicional
 
         if (is_branch) begin
             // BRANCH condicional (BEQ/BNE)

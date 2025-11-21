@@ -10,10 +10,8 @@ module instr_mem (
     reg [31:0] rom [0:1023];
 
     initial begin
-        // Puedes reemplazar esto por:
-        // $readmemh("program.hex", rom);
-        rom[0] = 32'h00000013; // NOP = addi x0,x0,0
-        rom[1] = 32'h00000013;
+        // Para tus pruebas reales, reemplaza por:
+        $readmemh("program.hex", rom);
     end
 
     wire [9:0] word_addr;

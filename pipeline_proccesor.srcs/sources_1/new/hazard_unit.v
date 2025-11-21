@@ -17,7 +17,7 @@ module hazard_unit (
 );
 
     always @(*) begin
-        // defaults
+        // valores por defecto
         stall_if  = 1'b0;
         stall_id  = 1'b0;
         flush_ex  = 1'b0;

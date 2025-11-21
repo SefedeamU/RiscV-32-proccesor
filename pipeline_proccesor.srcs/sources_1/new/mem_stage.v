@@ -18,23 +18,26 @@ module mem_stage (
     output wire [31:0]  ram_wdata,
     input  wire [31:0]  ram_rdata,
 
+    // Resultado hacia WB
     output wire [31:0]  mem_rdata_out
 );
 
     wire [31:0] load_data;
 
     lsu u_lsu (
-        .clk(clk),
-        .mem_read(mem_read),
+        .clk      (clk),
+        .mem_read (mem_read),
         .mem_write(mem_write),
-        .funct3(funct3),
-        .addr(alu_y),
-        .wdata(rf_r2),
-        .ram_we(ram_we),
-        .ram_be(ram_be),
-        .ram_addr(ram_addr),
+        .funct3   (funct3),
+        .addr     (alu_y),
+        .wdata    (rf_r2),
+
+        .ram_we   (ram_we),
+        .ram_be   (ram_be),
+        .ram_addr (ram_addr),
         .ram_wdata(ram_wdata),
         .ram_rdata(ram_rdata),
+
         .load_data(load_data)
     );
 

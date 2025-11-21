@@ -12,7 +12,7 @@ module decoder (
     output reg  [4:0]  rs2,
     output reg  [4:0]  rd,
 
-    // Clases de instrucción
+    // Clases de instrucciÃ³n
     output reg         is_rtype,
     output reg         is_itype,
     output reg         is_stype,
@@ -29,12 +29,12 @@ module decoder (
         rs2    = instr[24:20];
         funct7 = instr[31:25];
 
-        // Clasificación
+        // ClasificaciÃ³n
         is_rtype = (opcode == 7'b0110011);
         is_itype = (opcode == 7'b0010011) ||
                    (opcode == 7'b0000011);  // I-ALU + LOAD
-        is_stype = (opcode == 7'b0100011); // STORE
-        is_btype = (opcode == 7'b1100011); // BRANCH
+        is_stype = (opcode == 7'b0100011);  // STORE
+        is_btype = (opcode == 7'b1100011);  // BRANCH
         is_utype = (opcode == 7'b0110111) ||  // LUI
                    (opcode == 7'b0010111);    // AUIPC
         is_jtype = (opcode == 7'b1101111);    // JAL
