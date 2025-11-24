@@ -1,72 +1,78 @@
-// =============================================================
-// id_stage.v -- Updated Fase 3.5 (Verilog-2005)
-// Ahora exporta imm_j e is_jal para JAL.
-// =============================================================
+// -------------------------------------------------------------
+// id_stage.v - Etapa ID: decode + regfile + immediate
+// -------------------------------------------------------------
 module id_stage (
-    input  wire [31:0] instr,
+    input  wire        clk,
+    input  wire        reset,
 
-    output wire [4:0]  rs1,
-    output wire [4:0]  rs2,
-    output wire [4:0]  rd,
-    output wire [2:0]  funct3,
+    input  wire [31:0] PCD,
+    input  wire [31:0] InstrD,
 
-    input  wire [31:0] rf_r1,
-    input  wire [31:0] rf_r2,
+    // Señales de WB para escribir el banco de registros
+    input  wire        RegWriteW,
+    input  wire [4:0]  RdW,
+    input  wire [31:0] ResultW,
 
-    output wire [31:0] imm_i,
-    output wire [31:0] imm_b,
-    output wire [31:0] imm_j,
+    // Datos hacia EX
+    output wire [31:0] RD1D,
+    output wire [31:0] RD2D,
+    output wire [31:0] ImmExtD,
+    output wire [4:0]  Rs1D,
+    output wire [4:0]  Rs2D,
+    output wire [4:0]  RdD,
 
-    output wire [3:0]  alu_ctrl,
-    output wire        alu_src,
-    output wire        mem_write,
-    output wire        mem_read,
-    output wire        reg_write,
-    output wire [1:0]  result_src,
-    output wire        is_branch,
-    output wire        is_jal
+    // Control hacia EX/MEM/WB
+    output wire        RegWriteD,
+    output wire [1:0]  ResultSrcD,
+    output wire        MemWriteD,
+    output wire        BranchD,
+    output wire        JumpD,
+    output wire [2:0]  ALUControlD,
+    output wire        ALUSrcD,
+    output wire [1:0]  ImmSrcD
 );
 
-    wire [6:0] opcode;
-    wire [6:0] funct7;
+    // Campos de la instrucción
+    wire [6:0] opcode = InstrD[6:0];
+    wire [2:0] funct3 = InstrD[14:12];
+    wire [6:0] funct7 = InstrD[31:25];
 
-    decoder u_decoder (
-        .instr   (instr),
-        .opcode  (opcode),
-        .funct3  (funct3),
-        .funct7  (funct7),
-        .rs1     (rs1),
-        .rs2     (rs2),
-        .rd      (rd),
-        .is_rtype(),
-        .is_itype(),
-        .is_stype(),
-        .is_btype(),
-        .is_utype(),
-        .is_jtype()
+    assign RdD  = InstrD[11:7];
+    assign Rs1D = InstrD[19:15];
+    assign Rs2D = InstrD[24:20];
+
+    // ---------------- Banco de registros ----------------
+    regfile_int rf_u (
+        .clk (clk),
+        .we  (RegWriteW),
+        .a1  (Rs1D),
+        .a2  (Rs2D),
+        .a3  (RdW),
+        .wd3 (ResultW),
+        .rd1 (RD1D),
+        .rd2 (RD2D)
     );
 
-    immgen u_immgen (
-        .instr (instr),
-        .imm_i (imm_i),
-        .imm_s (),
-        .imm_b (imm_b),
-        .imm_u (),
-        .imm_j (imm_j)
+    // ---------------- Generador de inmediatos ----------------
+    immgen imm_u (
+        .instr   (InstrD),
+        .ImmSrcD (ImmSrcD),
+        .ImmExtD (ImmExtD)
     );
 
-    controller u_ctrl (
-        .opcode     (opcode),
-        .funct3     (funct3),
-        .funct7     (funct7),
-        .alu_src    (alu_src),
-        .mem_write  (mem_write),
-        .mem_read   (mem_read),
-        .reg_write  (reg_write),
-        .result_src (result_src),
-        .alu_ctrl   (alu_ctrl),
-        .is_branch  (is_branch),
-        .is_jal     (is_jal)
+    // ---------------- Unidad de control ----------------
+    controller ctrl_u (
+        .opcode      (opcode),
+        .funct3      (funct3),
+        .funct7      (funct7),
+        .RegWriteD   (RegWriteD),
+        .ResultSrcD  (ResultSrcD),
+        .MemWriteD   (MemWriteD),
+        .BranchD     (BranchD),
+        .JumpD       (JumpD),
+        .ALUControlD (ALUControlD),
+        .ALUSrcD     (ALUSrcD),
+        .ImmSrcD     (ImmSrcD)
     );
 
 endmodule

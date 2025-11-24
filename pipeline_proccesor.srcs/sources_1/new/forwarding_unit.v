@@ -1,38 +1,38 @@
-// =============================================================
-// forwarding_unit.v -- EX forwarding logic (Verilog-2005)
-// =============================================================
+// -------------------------------------------------------------
+// forwarding_unit.v - Unidad de forwarding
+// Codificación de ForwardA/ForwardB:
+//   2'b00: usar RD1E/RD2E (sin forwarding)
+//   2'b10: usar ALUResultM (EX/MEM)
+//   2'b01: usar ResultW   (MEM/WB)
+// -------------------------------------------------------------
 module forwarding_unit (
-    input  wire [4:0]  rs1_ex,
-    input  wire [4:0]  rs2_ex,
-
-    // MEM stage
-    input  wire [4:0]  rd_mem,
-    input  wire        reg_write_mem,
-
-    // WB stage
-    input  wire [4:0]  rd_wb,
-    input  wire        reg_write_wb,
-
-    output reg  [1:0]  forward_a,
-    output reg  [1:0]  forward_b
+    input  wire [4:0] Rs1E,
+    input  wire [4:0] Rs2E,
+    input  wire [4:0] RdM,
+    input  wire [4:0] RdW,
+    input  wire       RegWriteM,
+    input  wire       RegWriteW,
+    output reg  [1:0] ForwardAE,
+    output reg  [1:0] ForwardBE
 );
+    always @* begin
+        // Por defecto no hay forwarding
+        ForwardAE = 2'b00;
+        ForwardBE = 2'b00;
 
-    always @(*) begin
-        // Por defecto: no forwarding
-        forward_a = 2'b00;
-        forward_b = 2'b00;
+        // -------- Operando A --------
+        if (RegWriteM && (RdM != 5'd0) && (RdM == Rs1E)) begin
+            ForwardAE = 2'b10;               // desde EX/MEM
+        end else if (RegWriteW && (RdW != 5'd0) && (RdW == Rs1E)) begin
+            ForwardAE = 2'b01;               // desde MEM/WB
+        end
 
-        // ------- A (rs1) -------
-        if (reg_write_mem && (rd_mem != 0) && (rd_mem == rs1_ex))
-            forward_a = 2'b01;
-        else if (reg_write_wb && (rd_wb != 0) && (rd_wb == rs1_ex))
-            forward_a = 2'b10;
-
-        // ------- B (rs2) -------
-        if (reg_write_mem && (rd_mem != 0) && (rd_mem == rs2_ex))
-            forward_b = 2'b01;
-        else if (reg_write_wb && (rd_wb != 0) && (rd_wb == rs2_ex))
-            forward_b = 2'b10;
+        // -------- Operando B --------
+        if (RegWriteM && (RdM != 5'd0) && (RdM == Rs2E)) begin
+            ForwardBE = 2'b10;               // desde EX/MEM
+        end else if (RegWriteW && (RdW != 5'd0) && (RdW == Rs2E)) begin
+            ForwardBE = 2'b01;               // desde MEM/WB
+        end
     end
 
 endmodule

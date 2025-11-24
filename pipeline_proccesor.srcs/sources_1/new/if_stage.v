@@ -1,45 +1,24 @@
-// =============================================================
-// if_stage.v -- Updated for Fase 3 (Verilog-2005)
-// =============================================================
+// -------------------------------------------------------------
+// IF stage: PC register + PC+4
+// -------------------------------------------------------------
 module if_stage (
-    input  wire         clk,
-    input  wire         reset,
-    input  wire         stall,
-    input  wire         flush,
-
-    input  wire [31:0]  redirect_pc,
-    input  wire         redirect_en,
-
-    input  wire [31:0]  instr_in,
-    output reg  [31:0]  instr_out,
-
-    output reg  [31:0]  pc,
-    output reg  [31:0]  pc_plus4
+    input  wire        clk,
+    input  wire        reset,
+    input  wire        StallF,     // from hazard_unit
+    input  wire        PCSrcE,     // taken branch/jump (stage EX)
+    input  wire [31:0] PCTargetE,  // target address from EX
+    output reg  [31:0] PCF,        // PC in IF
+    output wire [31:0] PCPlus4F    // PCF + 4
 );
-
-    wire [31:0] next_pc = redirect_en ? redirect_pc : (pc + 32'd4);
-
-    always @(posedge clk) begin
-        if (reset)
-            pc <= 32'd0;
-        else if (!stall)
-            pc <= next_pc;
-    end
+    wire [31:0] pc_plus4 = PCF + 32'd4;
+    wire [31:0] pc_next  = PCSrcE ? PCTargetE : pc_plus4;
 
     always @(posedge clk) begin
         if (reset)
-            pc_plus4 <= 32'd4;
-        else if (!stall)
-            pc_plus4 <= pc + 32'd4;
+            PCF <= 32'd0;
+        else if (!StallF)
+            PCF <= pc_next;
     end
 
-    always @(posedge clk) begin
-        if (reset)
-            instr_out <= 32'h00000013;
-        else if (flush)
-            instr_out <= 32'h00000013;
-        else if (!stall)
-            instr_out <= instr_in;
-    end
-
+    assign PCPlus4F = pc_plus4;
 endmodule

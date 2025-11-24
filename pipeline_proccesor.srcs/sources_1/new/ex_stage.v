@@ -1,92 +1,101 @@
-// =============================================================
-// ex_stage.v -- Updated Fase 3.5 (Verilog-2005)
-// Ahora también maneja JAL (is_jal + imm_j).
-// =============================================================
+// -------------------------------------------------------------
+// ex_stage.v - Etapa EX: ALU + cálculo de PCTargetE + forwarding
+// -------------------------------------------------------------
 module ex_stage (
-    // From ID/EX pipeline
-    input  wire [31:0]  rf_r1,
-    input  wire [31:0]  rf_r2,
-    input  wire [31:0]  imm_i,
-    input  wire [31:0]  imm_b,
-    input  wire [31:0]  imm_j,
-    input  wire         alu_src,
-    input  wire [3:0]   alu_ctrl,
-    input  wire         is_branch,
-    input  wire         is_jal,
-    input  wire [31:0]  pc,
-    input  wire [2:0]   funct3,
+    // Control
+    input  wire        BranchE,
+    input  wire        JumpE,
+    input  wire [2:0]  ALUControlE,
+    input  wire        ALUSrcE,
 
-    // Forwarding data
-    input  wire [31:0]  mem_alu_y,
-    input  wire [31:0]  wb_wdata,
-    input  wire [1:0]   forward_a,
-    input  wire [1:0]   forward_b,
+    // Datos desde ID/EX
+    input  wire [31:0] PCE,
+    input  wire [31:0] RD1E,
+    input  wire [31:0] RD2E,
+    input  wire [31:0] ImmExtE,
+    input  wire [4:0]  Rs1E,
+    input  wire [4:0]  Rs2E,
 
-    // Outputs
-    output wire [31:0]  alu_y,
-    output reg          branch_taken,
-    output reg  [31:0]  branch_target
+    // Info de etapas posteriores para forwarding
+    input  wire        RegWriteM,
+    input  wire        RegWriteW,
+    input  wire [4:0]  RdM,
+    input  wire [4:0]  RdW,
+    input  wire [31:0] ALUResultM,
+    input  wire [31:0] ResultW,
+
+    // Salidas
+    output wire [31:0] ALUResultE,
+    output wire [31:0] WriteDataE,   // valor que va a MEM (stores)
+    output wire [31:0] PCTargetE,
+    output wire        ZeroE,
+    output wire        PCSrcE,
+
+    // Señales de depuración (opcionales)
+    output wire [1:0]  ForwardAE,
+    output wire [1:0]  ForwardBE,
+    output wire [31:0] srcA_fwd,
+    output wire [31:0] srcB_fwd,
+    output wire [31:0] srcB_alu,
+    output wire [31:0] y              // salida ALU
 );
 
-    // ------------------------------
-    // Forwarding multiplexers
-    // ------------------------------
-    reg [31:0] srcA;
-    reg [31:0] srcB_pre;
-    reg [31:0] srcB;
-
-    always @(*) begin
-        // Forward A
-        case (forward_a)
-            2'b00: srcA = rf_r1;
-            2'b01: srcA = mem_alu_y;
-            2'b10: srcA = wb_wdata;
-            default: srcA = rf_r1;
-        endcase
-
-        // Forward B (before alu_src)
-        case (forward_b)
-            2'b00: srcB_pre = rf_r2;
-            2'b01: srcB_pre = mem_alu_y;
-            2'b10: srcB_pre = wb_wdata;
-            default: srcB_pre = rf_r2;
-        endcase
-
-        // srcB final (inmediato vs registro)
-        srcB = (alu_src) ? imm_i : srcB_pre;
-    end
-
-    // ------------------------------
-    // ALU
-    // ------------------------------
-    alu_int u_alu (
-        .a        (srcA),
-        .b        (srcB),
-        .alu_ctrl (alu_ctrl),
-        .y        (alu_y)
+    // ---------------- Forwarding ----------------
+    forwarding_unit fwd_u (
+        .Rs1E      (Rs1E),
+        .Rs2E      (Rs2E),
+        .RdM       (RdM),
+        .RdW       (RdW),
+        .RegWriteM (RegWriteM),
+        .RegWriteW (RegWriteW),
+        .ForwardAE (ForwardAE),
+        .ForwardBE (ForwardBE)
     );
 
-    // ------------------------------
-    // Branch / Jump evaluation
-    // - BEQ/BNE usan imm_b
-    // - JAL usa imm_j
-    // ------------------------------
-    always @(*) begin
-        branch_taken  = 1'b0;
-        branch_target = pc + imm_b; // por defecto, target de branch condicional
+    // Selección de operandos con forwarding
+    reg [31:0] srcA, srcB;
 
-        if (is_branch) begin
-            // BRANCH condicional (BEQ/BNE)
-            case (funct3)
-                3'b000: branch_taken = (srcA == srcB_pre); // BEQ
-                3'b001: branch_taken = (srcA != srcB_pre); // BNE
-                default: branch_taken = 1'b0;
-            endcase
-        end else if (is_jal) begin
-            // JAL: salto incondicional a PC + imm_j
-            branch_taken  = 1'b1;
-            branch_target = pc + imm_j;
-        end
+    always @* begin
+        // Operando A
+        case (ForwardAE)
+            2'b00: srcA = RD1E;
+            2'b10: srcA = ALUResultM;
+            2'b01: srcA = ResultW;
+            default: srcA = RD1E;
+        endcase
+
+        // Operando B (antes de ALUSrc)
+        case (ForwardBE)
+            2'b00: srcB = RD2E;
+            2'b10: srcB = ALUResultM;
+            2'b01: srcB = ResultW;
+            default: srcB = RD2E;
+        endcase
     end
+
+    // Señales de depuración
+    assign srcA_fwd = srcA;
+    assign srcB_fwd = srcB;
+
+    // Si ALUSrcE=1, usar inmediato; si no, usar srcB (con forwarding)
+    assign srcB_alu = ALUSrcE ? ImmExtE : srcB;
+
+    // ---------------- ALU ----------------
+    alu_int alu_u (
+        .a        (srcA),
+        .b        (srcB_alu),
+        .alu_ctrl (ALUControlE),
+        .y        (y),
+        .zero     (ZeroE)
+    );
+
+    assign ALUResultE = y;
+
+    // Dato que se envía a MEM en stores (sin Imm)
+    assign WriteDataE = srcB;   // importante: sin ALUSrc
+
+    // ---------------- Branch / Jump ----------------
+    assign PCTargetE = PCE + ImmExtE;
+    assign PCSrcE    = (BranchE & ZeroE) | JumpE;
 
 endmodule

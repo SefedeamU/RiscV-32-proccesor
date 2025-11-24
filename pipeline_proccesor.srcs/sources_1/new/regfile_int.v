@@ -1,29 +1,38 @@
-// =============================================================
-// regfile_int.v -- Integer Register File (Verilog-2005)
-// =============================================================
+// -------------------------------------------------------------
+// regfile_int.v - Banco de registros entero x0..x31
+// x0 siempre es 0
+// Escritura síncrona, lectura combinacional
+// -------------------------------------------------------------
 module regfile_int (
-    input  wire         clk,
-    input  wire         we,      // write enable
-    input  wire [4:0]   raddr1,
-    input  wire [4:0]   raddr2,
-    input  wire [4:0]   waddr,
-    input  wire [31:0]  wdata,
-    output reg  [31:0]  rdata1,
-    output reg  [31:0]  rdata2
+    input  wire        clk,
+    input  wire        we,
+    input  wire [4:0]  a1,
+    input  wire [4:0]  a2,
+    input  wire [4:0]  a3,
+    input  wire [31:0] wd3,
+    output wire [31:0] rd1,
+    output wire [31:0] rd2
 );
-
     reg [31:0] regs [0:31];
 
-    // Lectura combinacional
-    always @(*) begin
-        rdata1 = (raddr1 == 5'd0) ? 32'd0 : regs[raddr1];
-        rdata2 = (raddr2 == 5'd0) ? 32'd0 : regs[raddr2];
+    integer i;
+    initial begin
+        for (i = 0; i < 32; i = i + 1)
+            regs[i] = 32'd0;
     end
 
-    // Escritura sincr�nica
+    // Escritura síncrona
     always @(posedge clk) begin
-        if (we && (waddr != 5'd0))
-            regs[waddr] <= wdata;
+        if (we && (a3 != 5'd0))
+            regs[a3] <= wd3;
     end
+    
+    // Lecturas con "write-first" explícito
+    assign rd1 = (a1 == 5'd0) ? 32'd0 :
+                 (we && (a3 == a1) && (a3 != 5'd0)) ? wd3 : regs[a1];
+    
+    assign rd2 = (a2 == 5'd0) ? 32'd0 :
+                 (we && (a3 == a2) && (a3 != 5'd0)) ? wd3 : regs[a2];
+
 
 endmodule

@@ -1,24 +1,15 @@
-// =============================================================
-// instr_mem.v  --  Instruction ROM (Verilog-2005)
-// =============================================================
-module instr_mem (
-    input  wire [31:0] addr,     // PC
-    output reg  [31:0] instr
+// -------------------------------------------------------------
+// instr_mem.v - Memoria de instrucciones (solo lectura)
+// -------------------------------------------------------------
+module instr_mem #(
+    parameter DEPTH = 1024
+) (
+    input  wire [31:0] a,  
+    output wire [31:0] rd
 );
+    // IMPORTANTE: nombre 'mem' para poder usar DUT.imem_u.mem
+    reg [31:0] mem [0:DEPTH-1];
 
-    // Memoria de 1024 palabras (4 KB)
-    reg [31:0] rom [0:1023];
-
-    initial begin
-        // Para tus pruebas reales, reemplaza por:
-        $readmemh("program.hex", rom);
-    end
-
-    wire [9:0] word_addr;
-    assign word_addr = addr[11:2];
-
-    always @(*) begin
-        instr = rom[word_addr];
-    end
-
+    // palabras alineadas (PC[1:0] = 00)
+    assign rd = mem[a[31:2]];
 endmodule

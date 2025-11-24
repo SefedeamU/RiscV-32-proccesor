@@ -1,35 +1,24 @@
-// =============================================================
-// pipe_if_id.v -- Updated for Fase 3.5 (Verilog-2005)
-// Ahora también transporta pc_plus4.
-// =============================================================
+// -------------------------------------------------------------
+// IF/ID pipeline register
+// -------------------------------------------------------------
 module pipe_if_id (
-    input  wire         clk,
-    input  wire         reset,
-    input  wire         enable,
-    input  wire         flush,
-
-    input  wire [31:0]  pc_in,
-    input  wire [31:0]  pc_plus4_in,
-    input  wire [31:0]  instr_in,
-
-    output reg  [31:0]  pc_out,
-    output reg  [31:0]  pc_plus4_out,
-    output reg  [31:0]  instr_out
+    input  wire        clk,
+    input  wire        reset,
+    input  wire        en,      // ~StallD
+    input  wire        flush,   // FlushD
+    input  wire [31:0] PCF,
+    input  wire [31:0] InstrF,
+    output reg  [31:0] PCD,
+    output reg  [31:0] InstrD
 );
-
     always @(posedge clk) begin
-        if (reset) begin
-            pc_out       <= 32'd0;
-            pc_plus4_out <= 32'd4;
-            instr_out    <= 32'h00000013; // NOP
-        end else if (flush) begin
-            // Se anula la instrucción, pero se puede conservar PC
-            instr_out <= 32'h00000013;
-        end else if (enable) begin
-            pc_out       <= pc_in;
-            pc_plus4_out <= pc_plus4_in;
-            instr_out    <= instr_in;
+        if (reset || flush) begin
+            PCD    <= 32'd0;
+            // NOP = ADDI x0,x0,0
+            InstrD <= 32'h00000013;
+        end else if (en) begin
+            PCD    <= PCF;
+            InstrD <= InstrF;
         end
     end
-
 endmodule

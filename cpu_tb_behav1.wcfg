@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="29.401 ns"></ZoomEndTime>
-      <Cursor1Time time="0.000 ns"></Cursor1Time>
+      <ZoomStartTime time="70.600 ns"></ZoomStartTime>
+      <ZoomEndTime time="136.401 ns"></ZoomEndTime>
+      <Cursor1Time time="123.070 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="161"></NameColumnWidth>
-      <ValueColumnWidth column_width="79"></ValueColumnWidth>
+      <NameColumnWidth column_width="236"></NameColumnWidth>
+      <ValueColumnWidth column_width="100"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="29" />
    <wvobject fp_name="/cpu_tb/clk" type="logic">
@@ -63,10 +63,12 @@
    <wvobject fp_name="/cpu_tb/DUT/u_core/u_ex/wb_wdata" type="array">
       <obj_property name="ElementShortName">wb_wdata[31:0]</obj_property>
       <obj_property name="ObjectShortName">wb_wdata[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/DUT/u_core/u_ex/alu_y" type="array">
       <obj_property name="ElementShortName">alu_y[31:0]</obj_property>
       <obj_property name="ObjectShortName">alu_y[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/DUT/u_core/u_hazard/stall_if" type="logic">
       <obj_property name="ElementShortName">stall_if</obj_property>

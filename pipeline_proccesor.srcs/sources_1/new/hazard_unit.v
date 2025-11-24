@@ -1,36 +1,34 @@
-// =============================================================
-// hazard_unit.v -- Load-Use Hazard Detection (Verilog-2005)
-// =============================================================
+// -------------------------------------------------------------
+// Hazard unit: load-use stall + flush por branch/jump
+// -------------------------------------------------------------
 module hazard_unit (
-    // EX stage
-    input  wire        mem_read_ex,
-    input  wire [4:0]  rd_ex,
-
-    // ID stage
-    input  wire [4:0]  rs1_id,
-    input  wire [4:0]  rs2_id,
-
-    // Output stalls
-    output reg         stall_if,
-    output reg         stall_id,
-    output reg         flush_ex
+    input  wire [4:0] Rs1D,
+    input  wire [4:0] Rs2D,
+    input  wire [4:0] RdE,
+    input  wire [1:0] ResultSrcE,   // código completo de ResultSrcE en EX
+    input  wire       PCSrcE,       // 1 si en EX hay branch tomado o jump
+    output wire       StallF,
+    output wire       StallD,
+    output wire       FlushD,
+    output wire       FlushE
 );
+    // --- load-use hazard: instrucción en EX es load y su RD se usa en ID ---
+    wire isLoadE = (ResultSrcE == 2'b01);  // 01 = resultado desde MEM
 
-    always @(*) begin
-        // valores por defecto
-        stall_if  = 1'b0;
-        stall_id  = 1'b0;
-        flush_ex  = 1'b0;
+    wire lwStall = isLoadE &&
+                   (RdE != 5'd0) &&
+                   ((RdE == Rs1D) || (RdE == Rs2D));
 
-        // LOAD-USE hazard
-        if (mem_read_ex &&
-           ((rd_ex == rs1_id) || (rd_ex == rs2_id)) &&
-            rd_ex != 0)
-        begin
-            stall_if  = 1'b1;
-            stall_id  = 1'b1;
-            flush_ex  = 1'b1;
-        end
-    end
+    // Stalls sólo por load-use
+    assign StallF = lwStall;
+    assign StallD = lwStall;
 
+    // Flush de E:
+    //  - cuando hay burbuja por load-use
+    //  - cuando hay cambio de PC (branch tomado o jump) en EX
+    assign FlushE = lwStall | PCSrcE;
+
+    // Flush de D:
+    //  - sólo cuando hay cambio de PC (branch tomado o jump)
+    assign FlushD = PCSrcE;
 endmodule

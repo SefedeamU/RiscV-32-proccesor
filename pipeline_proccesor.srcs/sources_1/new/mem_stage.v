@@ -1,46 +1,26 @@
-// =============================================================
-// mem_stage.v -- MEM Stage (Verilog-2005)
-// =============================================================
+// -------------------------------------------------------------
+// MEM stage: adaptación simple hacia data_mem
+// (solo LW/SW palabra alineada por ahora)
+// -------------------------------------------------------------
 module mem_stage (
-    input  wire         clk,
+    input  wire        clk,
+    input  wire        MemWriteM,
+    input  wire [31:0] ALUResultM,
+    input  wire [31:0] WriteDataM,
+    input  wire [31:0] ReadDataMem,   // from data_mem
 
-    input  wire         mem_read,
-    input  wire         mem_write,
-    input  wire [2:0]   funct3,
+    // hacia memoria de datos física
+    output wire        dmem_we,
+    output wire [31:0] dmem_addr,
+    output wire [31:0] dmem_wd,
 
-    input  wire [31:0]  alu_y,
-    input  wire [31:0]  rf_r2,
-
-    // RAM interface
-    output wire         ram_we,
-    output wire [3:0]   ram_be,
-    output wire [31:0]  ram_addr,
-    output wire [31:0]  ram_wdata,
-    input  wire [31:0]  ram_rdata,
-
-    // Resultado hacia WB
-    output wire [31:0]  mem_rdata_out
+    // de vuelta al pipeline
+    output wire [31:0] ReadDataM      // hacia MEM/WB
 );
+    assign dmem_we   = MemWriteM;
+    assign dmem_addr = ALUResultM;
+    assign dmem_wd   = WriteDataM;
 
-    wire [31:0] load_data;
-
-    lsu u_lsu (
-        .clk      (clk),
-        .mem_read (mem_read),
-        .mem_write(mem_write),
-        .funct3   (funct3),
-        .addr     (alu_y),
-        .wdata    (rf_r2),
-
-        .ram_we   (ram_we),
-        .ram_be   (ram_be),
-        .ram_addr (ram_addr),
-        .ram_wdata(ram_wdata),
-        .ram_rdata(ram_rdata),
-
-        .load_data(load_data)
-    );
-
-    assign mem_rdata_out = load_data;
-
+    // sin alineación especial por ahora
+    assign ReadDataM = ReadDataMem;
 endmodule
