@@ -1,22 +1,23 @@
-// ID stage: decodificación + regfile entero + regfile FP
+// id_stage.v - Etapa ID
 
 module id_stage (
     input  wire        clk,
     input  wire        reset,
-    input  wire [31:0] PCD,
-    input  wire [31:0] InstrD,
 
-    // write-back entero
+    input  wire [31:0] PCD,       // PC en etapa D (no usado en lógica actual)
+    input  wire [31:0] InstrD,    // instrucción en ID
+
+    // Write-back entero
     input  wire        RegWriteW,
     input  wire [4:0]  RdW,
     input  wire [31:0] ResultW,
 
-    // write-back FP
+    // Write-back FP
     input  wire        FPRegWriteW,
     input  wire [4:0]  FRdW,
     input  wire [31:0] FPResultW,
 
-    // datos hacia EX (enteros)
+    // Datos enteros hacia ID/EX
     output wire [31:0] RD1D,
     output wire [31:0] RD2D,
     output wire [31:0] ImmExtD,
@@ -24,14 +25,14 @@ module id_stage (
     output wire [4:0]  Rs2D,
     output wire [4:0]  RdD,
 
-    // datos hacia EX (FP)
+    // Datos FP hacia ID/EX
     output wire [31:0] FRD1D,
     output wire [31:0] FRD2D,
     output wire [4:0]  FRs1D,
     output wire [4:0]  FRs2D,
     output wire [4:0]  FRdD,
 
-    // control entero
+    // Control entero hacia ID/EX
     output wire        RegWriteD,
     output wire [1:0]  ResultSrcD,
     output wire        MemWriteD,
@@ -41,28 +42,28 @@ module id_stage (
     output wire        ALUSrcD,
     output wire [1:0]  ImmSrcD,
 
-    // control FP
+    // Control FP hacia ID/EX
     output wire        IsFPAluD,
     output wire        FPRegWriteD,
     output wire        IsFLWD,
     output wire        IsFSWD
 );
 
+    // Campos de la instrucción
     wire [6:0] opcode = InstrD[6:0];
     wire [2:0] funct3 = InstrD[14:12];
     wire [6:0] funct7 = InstrD[31:25];
 
-    // índices entero
     assign RdD  = InstrD[11:7];
     assign Rs1D = InstrD[19:15];
     assign Rs2D = InstrD[24:20];
 
-    // índices FP (mismo campo que RISC-V F)
+    // Índices FP (mapeo directo como en RISC-V F)
     assign FRdD  = InstrD[11:7];
     assign FRs1D = InstrD[19:15];
     assign FRs2D = InstrD[24:20];
 
-    // banco de registros entero
+    // Banco de registros entero (x0..x31)
     regfile_int rf_int_u (
         .clk (clk),
         .we  (RegWriteW),
@@ -74,7 +75,7 @@ module id_stage (
         .rd2 (RD2D)
     );
 
-    // banco de registros FP
+    // Banco de registros FP (f0..f31)
     regfile_fp rf_fp_u (
         .clk (clk),
         .we  (FPRegWriteW),
@@ -86,30 +87,48 @@ module id_stage (
         .rd2 (FRD2D)
     );
 
-    // generador de inmediatos
+
+    // Generador de inmediatos
+    wire [1:0] ImmSrcD_int;
+    assign ImmSrcD = ImmSrcD_int;  
+
     immgen imm_u (
         .instr   (InstrD),
-        .ImmSrcD (ImmSrcD),
+        .ImmSrcD (ImmSrcD_int),
         .ImmExtD (ImmExtD)
     );
 
-    // unidad de control entero + FP
+
+    // Unidad de control principal (entero + FP)
+    wire [1:0] ALUOpD;
+
     controller ctrl_u (
         .opcode      (opcode),
-        .funct3      (funct3),
-        .funct7      (funct7),
+
+        // control entero
         .RegWriteD   (RegWriteD),
         .ResultSrcD  (ResultSrcD),
         .MemWriteD   (MemWriteD),
         .BranchD     (BranchD),
         .JumpD       (JumpD),
-        .ALUControlD (ALUControlD),
         .ALUSrcD     (ALUSrcD),
-        .ImmSrcD     (ImmSrcD),
+        .ImmSrcD     (ImmSrcD_int),
+        .ALUOpD      (ALUOpD),
+
+        // control FP
         .IsFPAluD    (IsFPAluD),
         .FPRegWriteD (FPRegWriteD),
         .IsFLWD      (IsFLWD),
         .IsFSWD      (IsFSWD)
+    );
+
+    // Decodificador de ALU (entera + FP)
+    alu_decoder dec_u (
+        .opcode      (opcode),
+        .funct3      (funct3),
+        .funct7      (funct7),
+        .ALUOpD      (ALUOpD),
+        .ALUControlD (ALUControlD)
     );
 
 endmodule

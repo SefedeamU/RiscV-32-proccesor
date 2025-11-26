@@ -5,6 +5,7 @@ verilog xil_defaultlib  --include "D:/2025.1/Vivado/data/rsb/busdef" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/controller.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/cpu_top.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/data_mem.v" \
+"../../../../pipeline_proccesor.srcs/sources_1/new/decoder.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/ex_stage.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/forwarding_unit.v" \
 "../../../../../ARQUI-FINAL/project_6.srcs/sources_1/new/fp_addsubb.v" \

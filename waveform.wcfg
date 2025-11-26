@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="444.432 ns"></ZoomEndTime>
+      <ZoomStartTime time="460.700 ns"></ZoomStartTime>
+      <ZoomEndTime time="775.501 ns"></ZoomEndTime>
       <Cursor1Time time="85.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="176"></NameColumnWidth>
-      <ValueColumnWidth column_width="123"></ValueColumnWidth>
+      <ValueColumnWidth column_width="118"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="25" />
    <wvobject fp_name="/cpu_tb/clk" type="logic">
@@ -91,6 +91,7 @@
    <wvobject fp_name="/cpu_tb/DUT/mem_wb_reg/RdW" type="array">
       <obj_property name="ElementShortName">RdW[4:0]</obj_property>
       <obj_property name="ObjectShortName">RdW[4:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/DUT/wb_u/ResultW" type="array">
       <obj_property name="ElementShortName">ResultW[31:0]</obj_property>
