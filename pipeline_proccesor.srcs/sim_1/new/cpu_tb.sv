@@ -10,20 +10,24 @@ module cpu_tb;
         .reset (reset)
     );
 
+    // reloj 100 MHz (T = 10 ns)
     initial clk = 0;
-    always #5 clk = ~clk;   // toggle cada 5ns
+    always #5 clk = ~clk;
 
     initial begin
         reset = 1;
-        // programa
+
+        // programa entero (instrucciones)
         $readmemh("program.hex", DUT.imem_u.mem);
-        // datos FP
+
+        // datos para pruebas de memoria / FP
         $readmemh("data.hex", DUT.dmem_u.mem);
-        // Mantener reset unos ciclos
+
+        // mantener reset unos ciclos
         #20;
         reset = 0;
 
-        // Tiempo de simulación 
+        // tiempo total de simulación
         #2000;
         $finish;
     end

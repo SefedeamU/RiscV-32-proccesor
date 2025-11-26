@@ -1,9 +1,10 @@
-// pipe_mem_wb.v - Registro MEM/WB ampliado con FP + FLW/FSW
+// Registro pipeline MEM/WB con señales entero + FP
+
 module pipe_mem_wb (
     input  wire        clk,
     input  wire        reset,
 
-    // Entradas desde MEM (enteros)
+    // entradas desde MEM (entero)
     input  wire        RegWriteM,
     input  wire [1:0]  ResultSrcM,
     input  wire [31:0] ReadDataM,
@@ -11,7 +12,7 @@ module pipe_mem_wb (
     input  wire [31:0] PCPlus4M,
     input  wire [4:0]  RdM,
 
-    // Entradas desde MEM (FP)
+    // entradas desde MEM (FP)
     input  wire        FPRegWriteM,
     input  wire        IsFLWM,
     input  wire        IsFSWM,
@@ -19,7 +20,7 @@ module pipe_mem_wb (
     input  wire [31:0] FPResultM,
     input  wire [4:0]  FRdM,
 
-    // Salidas hacia WB (enteros)
+    // salidas hacia WB (entero)
     output reg         RegWriteW,
     output reg [1:0]   ResultSrcW,
     output reg [31:0]  ReadDataW,
@@ -27,7 +28,7 @@ module pipe_mem_wb (
     output reg [31:0]  PCPlus4W,
     output reg [4:0]   RdW,
 
-    // Salidas hacia WB (FP)
+    // salidas hacia WB (FP)
     output reg         FPRegWriteW,
     output reg         IsFLWW,
     output reg         IsFSWW,

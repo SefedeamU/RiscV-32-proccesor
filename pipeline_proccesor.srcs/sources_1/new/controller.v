@@ -1,10 +1,13 @@
-// controller.v - Unidad de control RV32I + FP (F, FLW, FSW)
+// Unidad de control RV32I + FP (FADD/FMUL/FDIV, FLW, FSW)
+// Separa control entero y FP. 
+// El camino FP usa IsFPAluD, IsFLWD, IsFSWD y FPRegWriteD; el camino entero usa el resto.
+
 module controller (
     input  wire [6:0] opcode,
     input  wire [2:0] funct3,
     input  wire [6:0] funct7,
 
-    // control entero clásico
+    // control entero
     output reg        RegWriteD,
     output reg [1:0]  ResultSrcD,
     output reg        MemWriteD,
@@ -14,17 +17,17 @@ module controller (
     output reg        ALUSrcD,
     output reg [1:0]  ImmSrcD,
 
-    // control FP nuevo
-    output reg        IsFPAluD,     // FADD/FSUB/FMUL/FDIV
-    output reg        FPRegWriteD,  // escritura en regfile_fp
-    output reg        IsFLWD,       // FLW
-    output reg        IsFSWD        // FSW
+    // control FP
+    output reg        IsFPAluD,
+    output reg        FPRegWriteD,
+    output reg        IsFLWD,
+    output reg        IsFSWD
 );
 
     reg [1:0] ALUOp;
 
     always @* begin
-        // defaults enteros
+        // defaults entero
         RegWriteD   = 1'b0;
         ResultSrcD  = 2'b00;
         MemWriteD   = 1'b0;
@@ -41,14 +44,13 @@ module controller (
         IsFSWD      = 1'b0;
 
         case (opcode)
-            // ------------ Entero clásico ------------
+            // -------- entero --------
             7'b0110011: begin // R-type
                 RegWriteD  = 1'b1;
                 ALUSrcD    = 1'b0;
                 ResultSrcD = 2'b00;
                 ALUOp      = 2'b10;
             end
-
             7'b0010011: begin // I-type ALU
                 RegWriteD  = 1'b1;
                 ALUSrcD    = 1'b1;
@@ -56,7 +58,6 @@ module controller (
                 ImmSrcD    = 2'b00;
                 ALUOp      = 2'b11;
             end
-
             7'b0000011: begin // LW
                 RegWriteD  = 1'b1;
                 ALUSrcD    = 1'b1;
@@ -64,23 +65,18 @@ module controller (
                 ImmSrcD    = 2'b00;
                 ALUOp      = 2'b00;
             end
-
             7'b0100011: begin // SW
-                RegWriteD  = 1'b0;
-                ALUSrcD    = 1'b1;
                 MemWriteD  = 1'b1;
+                ALUSrcD    = 1'b1;
                 ImmSrcD    = 2'b01;
                 ALUOp      = 2'b00;
             end
-
             7'b1100011: begin // Branch
-                RegWriteD  = 1'b0;
-                ALUSrcD    = 1'b0;
                 BranchD    = 1'b1;
+                ALUSrcD    = 1'b0;
                 ImmSrcD    = 2'b10;
                 ALUOp      = 2'b01;
             end
-
             7'b1101111: begin // JAL
                 RegWriteD  = 1'b1;
                 ALUSrcD    = 1'b1;
@@ -90,43 +86,34 @@ module controller (
                 ALUOp      = 2'b00;
             end
 
-            // ------------ FP LOAD / STORE ------------
+            // -------- FP LOAD / STORE --------
             7'b0000111: begin // FLW
-                // rd = freg, rs1 = xreg (base)
-                RegWriteD   = 1'b0;      // no escribe x*
-                FPRegWriteD = 1'b1;      // sí escribe f*
+                FPRegWriteD = 1'b1;
                 IsFLWD      = 1'b1;
-                ALUSrcD     = 1'b1;      // base + imm
-                ImmSrcD     = 2'b00;     // I-type
-                ALUOp       = 2'b00;     // ADD para dirección
+                ALUSrcD     = 1'b1;   // base entero + imm
+                ImmSrcD     = 2'b00;  // I-type
+                ALUOp       = 2'b00;  // ADD
             end
-
             7'b0100111: begin // FSW
-                // rs2 = freg (dato), rs1 = xreg (base)
-                RegWriteD   = 1'b0;
-                FPRegWriteD = 1'b0;
                 IsFSWD      = 1'b1;
                 MemWriteD   = 1'b1;
                 ALUSrcD     = 1'b1;
-                ImmSrcD     = 2'b01;     // S-type
-                ALUOp       = 2'b00;     // ADD dirección
+                ImmSrcD     = 2'b01;  // S-type
+                ALUOp       = 2'b00;  // ADD
             end
 
-            // ------------ OP-FP (FADD.S, FSUB.S, ...) ------------
+            // -------- OP-FP --------
             7'b1010011: begin
-                RegWriteD   = 1'b0;      // no x*
-                FPRegWriteD = 1'b1;      // f*
+                FPRegWriteD = 1'b1;
                 IsFPAluD    = 1'b1;
-                // ALUControlD se define abajo con funct7
+                // ALUControlD se decodifica abajo
             end
 
-            default: begin
-                // todo se queda en 0
-            end
+            default: ;
         endcase
     end
 
-    // ------------ ALU decoder (entero + FP) ------------
+    // decodificador de ALU (entera + FP)
     always @* begin
         ALUControlD = 3'b000;
 
@@ -140,13 +127,13 @@ module controller (
                 default:    ALUControlD = 3'b000;
             endcase
         end else begin
-            // entero
+            // ALU entero
             case (ALUOp)
                 2'b00: ALUControlD = 3'b000; // ADD
-                2'b01: ALUControlD = 3'b001; // SUB
-                2'b10: begin
+                2'b01: ALUControlD = 3'b001; // SUB (branches)
+                2'b10: begin               // R-type
                     case (funct3)
-                        3'b000: ALUControlD = (funct7[5]) ? 3'b001 : 3'b000;
+                        3'b000: ALUControlD = funct7[5] ? 3'b001 : 3'b000;
                         3'b111: ALUControlD = 3'b010; // AND
                         3'b110: ALUControlD = 3'b011; // OR
                         3'b100: ALUControlD = 3'b100; // XOR
@@ -155,7 +142,7 @@ module controller (
                         default: ALUControlD = 3'b000;
                     endcase
                 end
-                2'b11: begin
+                2'b11: begin               // I-type ALU
                     case (funct3)
                         3'b000: ALUControlD = 3'b000; // ADDI
                         3'b111: ALUControlD = 3'b010; // ANDI

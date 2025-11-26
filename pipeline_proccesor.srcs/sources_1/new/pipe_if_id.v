@@ -1,6 +1,6 @@
-// -------------------------------------------------------------
-// IF/ID pipeline register
-// -------------------------------------------------------------
+// Registro pipeline IF/ID
+// Inserta NOP cuando hay reset o flush (branch/jump).
+
 module pipe_if_id (
     input  wire        clk,
     input  wire        reset,
@@ -20,6 +20,5 @@ module pipe_if_id (
             PCD    <= PCF;
             InstrD <= InstrF;
         end
-        // si en=0 (StallD=1), PCD/InstrD conservan su valor => instrucción se queda en ID
     end
 endmodule

@@ -1,9 +1,10 @@
-// pipe_ex_mem.v - Registro EX/MEM ampliado con FP + FLW/FSW
+// Registro pipeline EX/MEM con señales entero + FP
+
 module pipe_ex_mem (
     input  wire        clk,
     input  wire        reset,
 
-    // Entradas EX (enteras)
+    // entradas desde EX (entero)
     input  wire        RegWriteE,
     input  wire [1:0]  ResultSrcE,
     input  wire        MemWriteE,
@@ -12,7 +13,7 @@ module pipe_ex_mem (
     input  wire [4:0]  RdE,
     input  wire [31:0] PCPlus4E,
 
-    // Entradas EX (FP)
+    // entradas desde EX (FP)
     input  wire        FPRegWriteE,
     input  wire        IsFLWE,
     input  wire        IsFSWE,
@@ -20,7 +21,7 @@ module pipe_ex_mem (
     input  wire [31:0] FPResultE,
     input  wire [4:0]  FRdE,
 
-    // Salidas hacia MEM (enteros)
+    // salidas hacia MEM (entero)
     output reg         RegWriteM,
     output reg [1:0]   ResultSrcM,
     output reg         MemWriteM,
@@ -29,7 +30,7 @@ module pipe_ex_mem (
     output reg [4:0]   RdM,
     output reg [31:0]  PCPlus4M,
 
-    // Salidas hacia MEM (FP)
+    // salidas hacia MEM (FP)
     output reg         FPRegWriteM,
     output reg         IsFLWM,
     output reg         IsFSWM,

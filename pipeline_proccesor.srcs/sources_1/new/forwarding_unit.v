@@ -1,9 +1,9 @@
 // -------------------------------------------------------------
-// forwarding_unit.v - Unidad de forwarding
-// Codificación de ForwardA/ForwardB:
-//   2'b00: usar RD1E/RD2E (sin forwarding)
-//   2'b10: usar ALUResultM (EX/MEM)
-//   2'b01: usar ResultW   (MEM/WB)
+// Unidad de forwarding entero
+// ForwardAE/ForwardBE:
+//   00: usar RD1E/RD2E (sin forwarding)
+//   10: usar ALUResultM (EX/MEM)
+//   01: usar ResultW   (MEM/WB)
 // -------------------------------------------------------------
 module forwarding_unit (
     input  wire [4:0] Rs1E,
@@ -16,23 +16,19 @@ module forwarding_unit (
     output reg  [1:0] ForwardBE
 );
     always @* begin
-        // Por defecto no hay forwarding
         ForwardAE = 2'b00;
         ForwardBE = 2'b00;
 
-        // -------- Operando A --------
-        if (RegWriteM && (RdM != 5'd0) && (RdM == Rs1E)) begin
-            ForwardAE = 2'b10;               // desde EX/MEM
-        end else if (RegWriteW && (RdW != 5'd0) && (RdW == Rs1E)) begin
-            ForwardAE = 2'b01;               // desde MEM/WB
-        end
+        // operando A
+        if (RegWriteM && (RdM != 5'd0) && (RdM == Rs1E))
+            ForwardAE = 2'b10;
+        else if (RegWriteW && (RdW != 5'd0) && (RdW == Rs1E))
+            ForwardAE = 2'b01;
 
-        // -------- Operando B --------
-        if (RegWriteM && (RdM != 5'd0) && (RdM == Rs2E)) begin
-            ForwardBE = 2'b10;               // desde EX/MEM
-        end else if (RegWriteW && (RdW != 5'd0) && (RdW == Rs2E)) begin
-            ForwardBE = 2'b01;               // desde MEM/WB
-        end
+        // operando B
+        if (RegWriteM && (RdM != 5'd0) && (RdM == Rs2E))
+            ForwardBE = 2'b10;
+        else if (RegWriteW && (RdW != 5'd0) && (RdW == Rs2E))
+            ForwardBE = 2'b01;
     end
-
 endmodule

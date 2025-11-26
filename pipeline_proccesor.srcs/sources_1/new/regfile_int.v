@@ -1,8 +1,6 @@
-// -------------------------------------------------------------
-// regfile_int.v - Banco de registros entero x0..x31
-// x0 siempre es 0
-// Escritura síncrona, lectura combinacional
-// -------------------------------------------------------------
+// Banco de registros entero x0..x31
+// Escritura síncrona, lectura combinacional (write-first).
+
 module regfile_int (
     input  wire        clk,
     input  wire        we,
@@ -21,18 +19,14 @@ module regfile_int (
             regs[i] = 32'd0;
     end
 
-    // Escritura síncrona
     always @(posedge clk) begin
         if (we && (a3 != 5'd0))
             regs[a3] <= wd3;
     end
-    
-    // Lecturas con "write-first" explícito
+
     assign rd1 = (a1 == 5'd0) ? 32'd0 :
                  (we && (a3 == a1) && (a3 != 5'd0)) ? wd3 : regs[a1];
-    
+
     assign rd2 = (a2 == 5'd0) ? 32'd0 :
                  (we && (a3 == a2) && (a3 != 5'd0)) ? wd3 : regs[a2];
-
-
 endmodule

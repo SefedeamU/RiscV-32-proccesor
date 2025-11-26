@@ -1,8 +1,8 @@
-// id_stage.v - Etapa ID con registros enteros + FP
+// ID stage: decodificación + regfile entero + regfile FP
+
 module id_stage (
     input  wire        clk,
     input  wire        reset,
-
     input  wire [31:0] PCD,
     input  wire [31:0] InstrD,
 
@@ -16,7 +16,7 @@ module id_stage (
     input  wire [4:0]  FRdW,
     input  wire [31:0] FPResultW,
 
-    // Datos hacia EX (enteros)
+    // datos hacia EX (enteros)
     output wire [31:0] RD1D,
     output wire [31:0] RD2D,
     output wire [31:0] ImmExtD,
@@ -24,14 +24,14 @@ module id_stage (
     output wire [4:0]  Rs2D,
     output wire [4:0]  RdD,
 
-    // Datos hacia EX (FP)
+    // datos hacia EX (FP)
     output wire [31:0] FRD1D,
     output wire [31:0] FRD2D,
     output wire [4:0]  FRs1D,
     output wire [4:0]  FRs2D,
     output wire [4:0]  FRdD,
 
-    // Control entero
+    // control entero
     output wire        RegWriteD,
     output wire [1:0]  ResultSrcD,
     output wire        MemWriteD,
@@ -41,7 +41,7 @@ module id_stage (
     output wire        ALUSrcD,
     output wire [1:0]  ImmSrcD,
 
-    // Control FP
+    // control FP
     output wire        IsFPAluD,
     output wire        FPRegWriteD,
     output wire        IsFLWD,
@@ -52,16 +52,17 @@ module id_stage (
     wire [2:0] funct3 = InstrD[14:12];
     wire [6:0] funct7 = InstrD[31:25];
 
+    // índices entero
     assign RdD  = InstrD[11:7];
     assign Rs1D = InstrD[19:15];
     assign Rs2D = InstrD[24:20];
 
-    // índices FP (misma codificación que RISC-V F)
+    // índices FP (mismo campo que RISC-V F)
     assign FRdD  = InstrD[11:7];
     assign FRs1D = InstrD[19:15];
     assign FRs2D = InstrD[24:20];
 
-    // Banco de registros entero
+    // banco de registros entero
     regfile_int rf_int_u (
         .clk (clk),
         .we  (RegWriteW),
@@ -73,7 +74,7 @@ module id_stage (
         .rd2 (RD2D)
     );
 
-    // Banco de registros FP
+    // banco de registros FP
     regfile_fp rf_fp_u (
         .clk (clk),
         .we  (FPRegWriteW),
@@ -85,14 +86,14 @@ module id_stage (
         .rd2 (FRD2D)
     );
 
-    // Inmediatos
+    // generador de inmediatos
     immgen imm_u (
         .instr   (InstrD),
         .ImmSrcD (ImmSrcD),
         .ImmExtD (ImmExtD)
     );
 
-    // Control
+    // unidad de control entero + FP
     controller ctrl_u (
         .opcode      (opcode),
         .funct3      (funct3),

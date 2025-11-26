@@ -1,6 +1,6 @@
-// -------------------------------------------------------------
-// cpu_top.v - Top-level: núcleo RV32I pipeline + FP (simple)
-// -------------------------------------------------------------
+// cpu_top.v
+// Núcleo RV32I pipeline 5 etapas + extensión FP (FADD/FMUL/FDIV, FLW/FSW). Camino entero y camino FP cableados en paralelo.
+
 module cpu_top (
     input  wire clk,
     input  wire reset
@@ -23,7 +23,7 @@ module cpu_top (
         .PCPlus4F  (PCPlus4F)
     );
 
-    // Memoria de instrucciones
+    // memoria de instrucciones (solo lectura)
     wire [31:0] InstrF;
     instr_mem imem_u (
         .a  (PCF),
@@ -45,13 +45,12 @@ module cpu_top (
         .InstrD (InstrD)
     );
 
-
     // ---------------- ID ----------------
-    // Datos enteros
+    // Camino entero
     wire [31:0] RD1D, RD2D, ImmExtD;
     wire [4:0]  Rs1D, Rs2D, RdD;
 
-    // Datos FP
+    // Camino FP
     wire [31:0] FRD1D, FRD2D;
     wire [4:0]  FRs1D, FRs2D, FRdD;
 
@@ -65,19 +64,19 @@ module cpu_top (
     wire        FPRegWriteD;
     wire        IsFLWD, IsFSWD;
 
-    // Señales de WB (enteras)
+    // Señales WB entero
     wire        RegWriteW;
     wire [1:0]  ResultSrcW;
     wire [31:0] ReadDataW, ALUResultW, PCPlus4W;
     wire [4:0]  RdW;
     wire [31:0] ResultW;
 
-    // Señales de WB (FP)
+    // Señales WB FP
     wire        FPRegWriteW;
     wire        IsFLWW, IsFSWW, IsFPAluW;
-    wire [31:0] FPResultW;      // desde MEM/WB
+    wire [31:0] FPResultW;
     wire [4:0]  FRdW;
-    wire [31:0] FPResultOutW;   // hacia regfile_fp
+    wire [31:0] FPResultOutW;
 
     id_stage id_u (
         .clk         (clk),
@@ -127,11 +126,11 @@ module cpu_top (
         .IsFSWD      (IsFSWD)
     );
 
-    // PC+4 en D
+    // PC+4 en D (solo para ResultSrc=PC+4)
     wire [31:0] PCPlus4D = PCD + 32'd4;
 
-    // ---------------- Señales de E/M/W ----------------
-    // ID/EX -> EX (enteras)
+    // ---------------- Señales hacia E/M/W ----------------
+    // ID/EX -> EX (entero)
     wire        RegWriteE, MemWriteE, BranchE, JumpE, ALUSrcE;
     wire [1:0]  ResultSrcE;
     wire [2:0]  ALUControlE;
@@ -143,15 +142,15 @@ module cpu_top (
     wire [31:0] FRD1E, FRD2E;
     wire [4:0]  FRs1E, FRs2E, FRdE;
 
-    // EX -> EX/MEM (enteras)
+    // EX -> EX/MEM (entero)
     wire [31:0] ALUResultE, WriteDataE;
     wire        ZeroE;
 
     // EX -> EX/MEM (FP)
     wire [31:0] FPResultE;
-    wire [4:0]  FPFlagsE;   // no usado aún
+    wire [4:0]  FPFlagsE;   // reservado
 
-    // EX/MEM -> MEM (enteras)
+    // EX/MEM -> MEM (entero)
     wire        RegWriteM, MemWriteM;
     wire [1:0]  ResultSrcM;
     wire [31:0] ALUResultM, WriteDataM, PCPlus4M;
@@ -162,28 +161,27 @@ module cpu_top (
     wire [31:0] FPResultM;
     wire [4:0]  FRdM;
 
-    // MEM -> data_mem
+    // Memoria de datos
     wire        dmem_we;
     wire [31:0] dmem_addr, dmem_wd, dmem_rd;
     wire [31:0] ReadDataM;
-    
 
-    // ---------------- Hazard unit (enteros + FLW FP) ----------------
+    // ---------------- Hazard unit (entero + FP carga) ----------------
     hazard_unit hz_u (
-        // enteros
+        // entero
         .Rs1D       (Rs1D),
         .Rs2D       (Rs2D),
         .RdE        (RdE),
         .ResultSrcE (ResultSrcE),
         .PCSrcE     (PCSrcE),
 
-        // FP para FLW
+        // FP (solo FLW)
         .FRs1D      (FRs1D),
         .FRs2D      (FRs2D),
         .FRdE       (FRdE),
         .IsFLWE     (IsFLWE),
 
-        // NUEVO: tipo de instrucción FP en ID
+        // tipo de instr FP en ID
         .IsFPAluD   (IsFPAluD),
         .IsFSWD     (IsFSWD),
 
@@ -194,14 +192,13 @@ module cpu_top (
         .FlushE     (FlushE)
     );
 
-
     // ---------------- ID/EX ----------------
     pipe_id_ex id_ex_reg (
         .clk         (clk),
         .reset       (reset),
         .flush       (FlushE),
 
-        // control enteros
+        // control entero
         .RegWriteD   (RegWriteD),
         .ResultSrcD  (ResultSrcD),
         .MemWriteD   (MemWriteD),
@@ -278,7 +275,7 @@ module cpu_top (
         .Rs1E        (Rs1E),
         .Rs2E        (Rs2E),
 
-        // control/operandos FP
+        // control / operandos FP
         .IsFPAluE    (IsFPAluE),
         .IsFSWE      (IsFSWE),
         .FRD1E       (FRD1E),
@@ -294,7 +291,7 @@ module cpu_top (
         .ALUResultM  (ALUResultM),
         .ResultW     (ResultW),
 
-        // forwarding FP: EX/MEM + MEM/WB
+        // forwarding FP
         .FPRegWriteM (FPRegWriteM),
         .FRdM        (FRdM),
         .FPResultM   (FPResultM),
@@ -311,24 +308,16 @@ module cpu_top (
 
         // salidas FP
         .FPResultE   (FPResultE),
-        .FPFlagsE    (FPFlagsE),
-
-        // debug
-        .ForwardAE   (),
-        .ForwardBE   (),
-        .srcA_fwd    (),
-        .srcB_fwd    (),
-        .srcB_alu    (),
-        .y           ()
+        .FPFlagsE    (FPFlagsE)
+        
     );
-
 
     // ---------------- EX/MEM ----------------
     pipe_ex_mem ex_mem_reg (
         .clk         (clk),
         .reset       (reset),
 
-        // enteros
+        // entero
         .RegWriteE   (RegWriteE),
         .ResultSrcE  (ResultSrcE),
         .MemWriteE   (MemWriteE),
@@ -345,7 +334,7 @@ module cpu_top (
         .FPResultE   (FPResultE),
         .FRdE        (FRdE),
 
-        // salidas hacia MEM (enteros)
+        // salidas entero
         .RegWriteM   (RegWriteM),
         .ResultSrcM  (ResultSrcM),
         .MemWriteM   (MemWriteM),
@@ -354,7 +343,7 @@ module cpu_top (
         .RdM         (RdM),
         .PCPlus4M    (PCPlus4M),
 
-        // salidas hacia MEM (FP)
+        // salidas FP
         .FPRegWriteM (FPRegWriteM),
         .IsFLWM      (IsFLWM),
         .IsFSWM      (IsFSWM),
@@ -367,7 +356,7 @@ module cpu_top (
     mem_stage mem_stage_u (
         .clk         (clk),
         .MemWriteM   (MemWriteM),
-        .IsFSWM      (IsFSWM),    
+        .IsFSWM      (IsFSWM),
         .ALUResultM  (ALUResultM),
         .WriteDataM  (WriteDataM),
         .ReadDataMem (dmem_rd),
@@ -390,7 +379,7 @@ module cpu_top (
         .clk         (clk),
         .reset       (reset),
 
-        // enteros
+        // entero
         .RegWriteM   (RegWriteM),
         .ResultSrcM  (ResultSrcM),
         .ReadDataM   (ReadDataM),
@@ -406,7 +395,7 @@ module cpu_top (
         .FPResultM   (FPResultM),
         .FRdM        (FRdM),
 
-        // salidas enteras
+        // salidas entero
         .RegWriteW   (RegWriteW),
         .ResultSrcW  (ResultSrcW),
         .ReadDataW   (ReadDataW),
@@ -436,7 +425,7 @@ module cpu_top (
         .IsFLWW        (IsFLWW),
         .IsFPAluW      (IsFPAluW),
         .FPResultW_in  (FPResultW),
-        .FPResultOutW  (FPResultOutW)
+        .FPResultW  (FPResultOutW)
     );
 
 endmodule

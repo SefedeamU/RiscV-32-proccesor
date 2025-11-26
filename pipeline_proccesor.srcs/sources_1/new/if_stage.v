@@ -1,13 +1,12 @@
-// -------------------------------------------------------------
-// IF stage: PC register + PC+4
-// -------------------------------------------------------------
+// IF stage
+
 module if_stage (
     input  wire        clk,
     input  wire        reset,
-    input  wire        StallF,     // from hazard_unit
-    input  wire        PCSrcE,     // taken branch/jump (stage EX)
-    input  wire [31:0] PCTargetE,  // target address from EX
-    output reg  [31:0] PCF,        // PC in IF
+    input  wire        StallF,     // de hazard_unit
+    input  wire        PCSrcE,     // branch/jump tomado en EX
+    input  wire [31:0] PCTargetE,  // destino en EX
+    output reg  [31:0] PCF,        // PC en IF
     output wire [31:0] PCPlus4F    // PCF + 4
 );
     wire [31:0] pc_plus4 = PCF + 32'd4;

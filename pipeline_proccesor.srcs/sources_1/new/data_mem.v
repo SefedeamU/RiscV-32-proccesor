@@ -1,6 +1,5 @@
-// -------------------------------------------------------------
-// data_mem.v - Memoria de datos palabra alineada
-// -------------------------------------------------------------
+// Memoria de datos palabra alineada
+
 module data_mem #(
     parameter DEPTH = 1024
 ) (
@@ -10,7 +9,6 @@ module data_mem #(
     input  wire [31:0] wd,
     output wire [31:0] rd
 );
-    // IMPORTANTE: nombre 'mem' para poder usar DUT.dmem_u.mem
     reg [31:0] mem [0:DEPTH-1];
 
     always @(posedge clk) begin
