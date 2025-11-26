@@ -3,10 +3,10 @@
 # SW Build 6140274 on Thu May 22 00:12:29 MDT 2025
 # IP Build 6138677 on Thu May 22 03:10:11 MDT 2025
 # SharedData Build 6139179 on Tue May 20 17:58:58 MDT 2025
-# Start of session at: Thu Nov 20 14:38:10 2025
-# Process ID         : 25448
+# Start of session at: Tue Nov 25 14:38:47 2025
+# Process ID         : 16240
 # Current directory  : C:/Users/Juan/Desktop/RiscV-32-proccesor
-# Command line       : vivado.exe -gui_launcher_event rodinguilauncherevent18412 C:\Users\Juan\Desktop\RiscV-32-proccesor\pipeline_proccesor.xpr
+# Command line       : vivado.exe -gui_launcher_event rodinguilauncherevent10068 C:\Users\Juan\Desktop\RiscV-32-proccesor\pipeline_proccesor.xpr
 # Log file           : C:/Users/Juan/Desktop/RiscV-32-proccesor/vivado.log
 # Journal file       : C:/Users/Juan/Desktop/RiscV-32-proccesor\vivado.jou
 # Running On         : DESKTOP-0DKD4I4
@@ -17,151 +17,9 @@
 # CPU Physical cores : 14
 # CPU Logical cores  : 20
 # Host memory        : 16873 MB
-# Swap memory        : 15032 MB
-# Total Virtual      : 31905 MB
-# Available Virtual  : 20238 MB
+# Swap memory        : 14495 MB
+# Total Virtual      : 31369 MB
+# Available Virtual  : 13420 MB
 #-----------------------------------------------------------
 start_gui
 open_project C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.xpr
-update_compile_order -fileset sources_1
-launch_simulation
-reset_simulation -simset sim_1 -mode behavioral
-reset_simulation -simset sim_1 -mode behavioral
-launch_simulation
-update_compile_order -fileset sources_1
-launch_simulation
-source cpu_top.tcl
-close_sim
-launch_simulation
-update_compile_order -fileset sources_1
-update_compile_order -fileset sim_1
-launch_simulation
-reset_simulation -simset sim_1 -mode behavioral
-launch_simulation
-launch_simulation
-launch_simulation
-source cpu_tb.tcl
-current_wave_config {Untitled 2}
-add_wave {{/cpu_tb/DUT/u_core/u_if}} 
-current_wave_config {Untitled 2}
-add_wave {{/cpu_tb/DUT/u_core/u_if}} 
-close_sim
-launch_simulation
-source cpu_tb.tcl
-current_wave_config {Untitled 3}
-add_wave {{/cpu_tb/DUT/u_core/u_if/next_pc}} 
-current_wave_config {Untitled 3}
-add_wave {{/cpu_tb/DUT/u_core/u_if/pc}} 
-current_wave_config {Untitled 3}
-add_wave {{/cpu_tb/DUT/u_core/u_id_ex}} 
-save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg}
-add_files -fileset sim_1 -norecurse C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg
-set_property xsim.view C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg [get_filesets sim_1]
-close_sim
-close_project
-open_project C:/Users/Juan/vivado/lab6/lab6.xpr
-update_compile_order -fileset sources_1
-close_project
-open_project C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.xpr
-update_compile_order -fileset sources_1
-launch_simulation
-open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg
-source cpu_tb.tcl
-close_sim
-launch_simulation
-open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg
-source cpu_tb.tcl
-close_sim
-launch_simulation
-open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg
-source cpu_tb.tcl
-export_ip_user_files -of_objects  [get_files C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg] -no_script -reset -force -quiet
-remove_files  -fileset sim_1 C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg
-remove_files  -fileset sim_1 C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg
-close_sim
-launch_simulation
-source cpu_tb.tcl
-current_wave_config {Untitled 4}
-add_wave {{/cpu_tb/DUT/u_core/u_if/pc}} 
-current_wave_config {Untitled 4}
-add_wave {{/cpu_tb/DUT/u_core/u_if/next_pc}} 
-close_sim
-launch_simulation
-launch_simulation
-source cpu_tb.tcl
-current_wave_config {Untitled 5}
-add_wave {{/cpu_tb/DUT/u_core/u_if/pc}} 
-save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg}
-add_files -fileset sim_1 -norecurse C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg
-set_property xsim.view {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav.wcfg C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg} [get_filesets sim_1]
-close_sim
-launch_simulation
-launch_simulation
-open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg
-source cpu_tb.tcl
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_mem/u_instr_mem/instr}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_if_id/instr_out}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_forward/forward_a}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_forward/forward_b}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/rf_r1}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/rf_r2}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/mem_alu_y}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/wb_wdata}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/alu_y}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_hazard/stall_if}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_hazard/stall_id}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_hazard/flush_ex}} 
-save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg}
-close_sim
-launch_simulation
-open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg
-source cpu_tb.tcl
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/is_branch}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/is_jal}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/branch_taken}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_ex/branch_target}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_mem_stage/ram_addr}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_mem_stage/ram_be}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_mem_stage/ram_we}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_mem_stage/ram_wdata}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_core/u_mem_stage/mem_rdata_out}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_mem/u_data_mem/mem_we}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_mem/u_data_mem/mem_be}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_mem/u_data_mem/addr}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_mem/u_data_mem/wdata}} 
-current_wave_config {cpu_tb_behav1.wcfg}
-add_wave {{/cpu_tb/DUT/u_mem/u_data_mem/rdata}} 
-save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg}
-close_sim
-launch_simulation
-open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg
-source cpu_tb.tcl
-close_sim
-launch_simulation
-open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_behav1.wcfg
-source cpu_tb.tcl

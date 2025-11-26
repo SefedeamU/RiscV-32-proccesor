@@ -1,26 +1,26 @@
-// -------------------------------------------------------------
-// MEM stage: adaptación simple hacia data_mem
-// (solo LW/SW palabra alineada por ahora)
-// -------------------------------------------------------------
+// mem_stage.v - Etapa MEM (LW/SW + FLW/FSW usan el mismo camino)
 module mem_stage (
     input  wire        clk,
     input  wire        MemWriteM,
+    input  wire        IsFSWM,       // <--- NUEVO
     input  wire [31:0] ALUResultM,
     input  wire [31:0] WriteDataM,
-    input  wire [31:0] ReadDataMem,   // from data_mem
+    input  wire [31:0] ReadDataMem,  // from data_mem
 
-    // hacia memoria de datos física
+    // hacia memoria física
     output wire        dmem_we,
     output wire [31:0] dmem_addr,
     output wire [31:0] dmem_wd,
 
-    // de vuelta al pipeline
-    output wire [31:0] ReadDataM      // hacia MEM/WB
+    // hacia MEM/WB
+    output wire [31:0] ReadDataM
 );
-    assign dmem_we   = MemWriteM;
-    assign dmem_addr = ALUResultM;
-    assign dmem_wd   = WriteDataM;
 
-    // sin alineación especial por ahora
-    assign ReadDataM = ReadDataMem;
+    // SW entero: MemWriteM=1, IsFSWM=0
+    // FSW:       MemWriteM puede ser 0 pero IsFSWM=1
+    assign dmem_we   = MemWriteM | IsFSWM;
+    assign dmem_addr = ALUResultM;   // dirección calculada en EX
+    assign dmem_wd   = WriteDataM;   // dato entero (SW) o FP (FSW)
+
+    assign ReadDataM = ReadDataMem;  // LW y FLW leen por aquí
 endmodule

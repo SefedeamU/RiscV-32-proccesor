@@ -20,5 +20,6 @@ module pipe_if_id (
             PCD    <= PCF;
             InstrD <= InstrF;
         end
+        // si en=0 (StallD=1), PCD/InstrD conservan su valor => instrucción se queda en ID
     end
 endmodule

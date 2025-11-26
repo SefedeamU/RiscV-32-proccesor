@@ -1,27 +1,34 @@
-// =============================================================
-// regfile_fp.v -- Floating-Point Register File (Verilog-2005)
-// =============================================================
+// regfile_fp.v - Banco de registros en punto flotante f0..f31 (32 bits)
+// Escritura síncrona, lectura combinacional con "write-first".
 module regfile_fp (
-    input  wire         clk,
-    input  wire         we,
-    input  wire [4:0]   raddr1,
-    input  wire [4:0]   raddr2,
-    input  wire [4:0]   waddr,
-    input  wire [31:0]  wdata,
-    output reg  [31:0]  rdata1,
-    output reg  [31:0]  rdata2
+    input  wire        clk,
+    input  wire        we,
+    input  wire [4:0]  a1,
+    input  wire [4:0]  a2,
+    input  wire [4:0]  a3,
+    input  wire [31:0] wd3,
+    output wire [31:0] rd1,
+    output wire [31:0] rd2
 );
+    reg [31:0] regs [0:31];
 
-    reg [31:0] fregs [0:31];
-
-    always @(*) begin
-        rdata1 = fregs[raddr1];
-        rdata2 = fregs[raddr2];
+    integer i;
+    initial begin
+        for (i = 0; i < 32; i = i + 1)
+            regs[i] = 32'd0;
     end
 
+    // Escritura síncrona
     always @(posedge clk) begin
-        if (we)
-            fregs[waddr] <= wdata;
+        if (we && (a3 != 5'd0))
+            regs[a3] <= wd3;
     end
+
+    // Lecturas: write-first explícito
+    assign rd1 = (a1 == 5'd0) ? 32'd0 :
+                 (we && (a3 == a1) && (a3 != 5'd0)) ? wd3 : regs[a1];
+
+    assign rd2 = (a2 == 5'd0) ? 32'd0 :
+                 (we && (a3 == a2) && (a3 != 5'd0)) ? wd3 : regs[a2];
 
 endmodule

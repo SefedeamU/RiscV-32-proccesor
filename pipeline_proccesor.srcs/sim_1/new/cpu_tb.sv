@@ -15,12 +15,13 @@ module cpu_tb;
 
     initial begin
         reset = 1;
-        // Cargar programa
+        // programa
         $readmemh("program.hex", DUT.imem_u.mem);
+        // datos FP
+        $readmemh("data.hex", DUT.dmem_u.mem);
         // Mantener reset unos ciclos
         #20;
         reset = 0;
-
 
         // Tiempo de simulación 
         #2000;
