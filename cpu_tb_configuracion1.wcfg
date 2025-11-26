@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="33.930 ns"></ZoomStartTime>
-      <ZoomEndTime time="112.631 ns"></ZoomEndTime>
+      <ZoomStartTime time="720.730 ns"></ZoomStartTime>
+      <ZoomEndTime time="799.681 ns"></ZoomEndTime>
       <Cursor1Time time="28.200 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="208"></NameColumnWidth>
-      <ValueColumnWidth column_width="86"></ValueColumnWidth>
+      <ValueColumnWidth column_width="81"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="67" />
    <wvobject fp_name="/cpu_tb/clk" type="logic">
@@ -287,6 +287,7 @@
    <wvobject fp_name="/cpu_tb/DUT/dmem_u/a" type="array">
       <obj_property name="ElementShortName">a[31:0]</obj_property>
       <obj_property name="ObjectShortName">a[31:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/cpu_tb/DUT/dmem_u/wd" type="array">
       <obj_property name="ElementShortName">wd[31:0]</obj_property>

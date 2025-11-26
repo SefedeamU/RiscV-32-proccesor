@@ -23,3 +23,242 @@
 #-----------------------------------------------------------
 start_gui
 open_project C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.xpr
+update_compile_order -fileset sources_1
+close [ open C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/alu_fp.v w ]
+add_files C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/alu_fp.v
+update_compile_order -fileset sources_1
+add_files -norecurse {C:/Users/Juan/Desktop/ARQUI-FINAL/project_6.srcs/sources_1/new/fp_div.v C:/Users/Juan/Desktop/ARQUI-FINAL/project_6.srcs/sources_1/new/fp_addsubb.v C:/Users/Juan/Desktop/ARQUI-FINAL/project_6.srcs/sources_1/new/fp_mul.v}
+update_compile_order -fileset sources_1
+launch_simulation
+update_compile_order -fileset sources_1
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+update_compile_order -fileset sources_1
+launch_simulation
+launch_simulation
+launch_simulation
+update_compile_order -fileset sources_1
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/ex_u/fp_u/result}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/ex_u/fp_u/op_a}} 
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/ex_u/fp_u/op_b}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/dmem_u/we}} 
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/dmem_u/a}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/dmem_u/wd}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/dmem_u}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+update_compile_order -fileset sources_1
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+update_compile_order -fileset sources_1
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+launch_simulation
+close [ open C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/fp_forwarding_unit.v w ]
+add_files C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/fp_forwarding_unit.v
+update_compile_order -fileset sources_1
+launch_simulation
+update_compile_order -fileset sources_1
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+export_ip_user_files -of_objects  [get_files C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/fpu_add.v] -no_script -reset -force -quiet
+remove_files  C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/fpu_add.v
+export_ip_user_files -of_objects  [get_files C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/lsu.v] -no_script -reset -force -quiet
+remove_files  C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/lsu.v
+export_ip_user_files -of_objects  [get_files C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/fpu_div.v] -no_script -reset -force -quiet
+remove_files  C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/fpu_div.v
+export_ip_user_files -of_objects  [get_files C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/fpu_mul.v] -no_script -reset -force -quiet
+remove_files  C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/fpu_mul.v
+export_ip_user_files -of_objects  [get_files C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/mem_top.v] -no_script -reset -force -quiet
+remove_files  C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/mem_top.v
+export_ip_user_files -of_objects  [get_files C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/core_pipeline.v] -no_script -reset -force -quiet
+remove_files  C:/Users/Juan/Desktop/RiscV-32-proccesor/pipeline_proccesor.srcs/sources_1/new/core_pipeline.v
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/ex_u/fp_u/op_a}} 
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/ex_u/fp_u/op_b}} 
+current_wave_config {cpu_tb_configuracion1.wcfg}
+add_wave {{/cpu_tb/DUT/ex_u/fp_u/result}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/cpu_tb_configuracion1.wcfg
+source cpu_tb.tcl

@@ -170,25 +170,30 @@ module cpu_top (
 
     // ---------------- Hazard unit (enteros + FLW FP) ----------------
     hazard_unit hz_u (
-        // enteros (como antes)
+        // enteros
         .Rs1D       (Rs1D),
         .Rs2D       (Rs2D),
         .RdE        (RdE),
         .ResultSrcE (ResultSrcE),
         .PCSrcE     (PCSrcE),
-    
-        // NUEVO: FP para FLW
+
+        // FP para FLW
         .FRs1D      (FRs1D),
         .FRs2D      (FRs2D),
         .FRdE       (FRdE),
         .IsFLWE     (IsFLWE),
-    
+
+        // NUEVO: tipo de instrucción FP en ID
+        .IsFPAluD   (IsFPAluD),
+        .IsFSWD     (IsFSWD),
+
         // salidas
         .StallF     (StallF),
         .StallD     (StallD),
         .FlushD     (FlushD),
         .FlushE     (FlushE)
     );
+
 
     // ---------------- ID/EX ----------------
     pipe_id_ex id_ex_reg (
