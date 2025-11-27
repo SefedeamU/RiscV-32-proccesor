@@ -1,10 +1,5 @@
-// -------------------------------------------------------------
-// Unidad de forwarding entero
-// ForwardAE/ForwardBE:
-//   00: usar RD1E/RD2E (sin forwarding)
-//   10: usar ALUResultM (EX/MEM)
-//   01: usar ResultW   (MEM/WB)
-// -------------------------------------------------------------
+// forwarding_unit.v  (enteros)
+
 module forwarding_unit (
     input  wire [4:0] Rs1E,
     input  wire [4:0] Rs2E,

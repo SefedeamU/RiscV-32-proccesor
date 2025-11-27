@@ -1,19 +1,14 @@
-// -------------------------------------------------------------
-// ALU FP combinacional
-// op_code: 000=ADD, 001=SUB, 010=MUL, 011=DIV
-// mode_fp: 0=half (16 bits en [15:0]), 1=single (32 bits)
-// flags[4:0] = {overflow, underflow, div_by_zero, invalid, inexact}
-// -------------------------------------------------------------
+// alu_fp.v 
+
 module alu_fp (
-    input  wire        mode_fp,
+    input  wire        mode_fp,      // 0=half (16), 1=single (32)
     input  wire [1:0]  round_mode,
     input  wire [31:0] op_a,
     input  wire [31:0] op_b,
-    input  wire [2:0]  op_code,
+    input  wire [2:0]  op_code,      // 000=ADD,001=SUB,010=MUL,011=DIV
     output wire [31:0] result,
     output wire [4:0]  flags
 );
-
     wire do_add = (op_code == 3'b000);
     wire do_sub = (op_code == 3'b001);
     wire do_mul = (op_code == 3'b010);

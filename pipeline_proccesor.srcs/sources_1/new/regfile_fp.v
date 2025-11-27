@@ -1,5 +1,4 @@
-// Banco de registros FP f0..f31 (32 bits)
-// Escritura síncrona, lectura combinacional (write-first).
+// regfile_fp.v
 
 module regfile_fp (
     input  wire        clk,
@@ -20,13 +19,11 @@ module regfile_fp (
     end
 
     always @(posedge clk) begin
-        if (we && (a3 != 5'd0))
+        if (we)
             regs[a3] <= wd3;
     end
 
-    assign rd1 = (a1 == 5'd0) ? 32'd0 :
-                 (we && (a3 == a1) && (a3 != 5'd0)) ? wd3 : regs[a1];
-
-    assign rd2 = (a2 == 5'd0) ? 32'd0 :
-                 (we && (a3 == a2) && (a3 != 5'd0)) ? wd3 : regs[a2];
+    // lectura combinacional con write-first
+    assign rd1 = (we && (a3 == a1)) ? wd3 : regs[a1];
+    assign rd2 = (we && (a3 == a2)) ? wd3 : regs[a2];
 endmodule

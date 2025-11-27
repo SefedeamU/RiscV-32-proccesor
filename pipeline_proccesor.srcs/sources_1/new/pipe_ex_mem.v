@@ -1,4 +1,4 @@
-// Registro pipeline EX/MEM con señales entero + FP
+// pipe_ex_mem.v
 
 module pipe_ex_mem (
     input  wire        clk,

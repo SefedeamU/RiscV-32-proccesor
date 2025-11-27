@@ -1,4 +1,4 @@
-// Registro pipeline ID/EX con señales entero + FP
+// pipe_id_ex.v
 
 module pipe_id_ex (
     input  wire        clk,

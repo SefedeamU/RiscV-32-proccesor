@@ -1,4 +1,7 @@
-// EX stage: ALU entera + ALU FP + forwarding entero y FP
+// ex_stage.v
+//  - ALU entera + ALU FP
+//  - Forwarding entero y FP simétricos
+//  - WriteDataE multiplexa entre dato entero y FP (FSW)
 
 module ex_stage (
     // control entero
@@ -48,18 +51,13 @@ module ex_stage (
 
     // salidas FP
     output wire [31:0] FPResultE,
-    output wire [4:0]  FPFlagsE,
-
-    // señales debug entero
-    output wire [1:0]  ForwardAE,
-    output wire [1:0]  ForwardBE,
-    output wire [31:0] srcA_fwd,
-    output wire [31:0] srcB_fwd,
-    output wire [31:0] srcB_alu,
-    output wire [31:0] y
+    output wire [4:0]  FPFlagsE
 );
 
-    // ---------- Forwarding entero ----------
+    //---------- Forwarding entero ----------
+    wire [1:0] ForwardAE;
+    wire [1:0] ForwardBE;
+
     forwarding_unit fwd_int_u (
         .Rs1E      (Rs1E),
         .Rs2E      (Rs2E),
@@ -71,7 +69,8 @@ module ex_stage (
         .ForwardBE (ForwardBE)
     );
 
-    reg [31:0] srcA, srcB;
+    reg [31:0] srcA;
+    reg [31:0] srcB;
 
     always @* begin
         case (ForwardAE)
@@ -87,23 +86,21 @@ module ex_stage (
         endcase
     end
 
-    assign srcA_fwd = srcA;
-    assign srcB_fwd = srcB;
-
-    assign srcB_alu = ALUSrcE ? ImmExtE : srcB;
+    wire [31:0] srcB_alu = ALUSrcE ? ImmExtE : srcB;
 
     // ALU entero
+    wire [31:0] y_int;
     alu_int alu_u (
         .a        (srcA),
         .b        (srcB_alu),
         .alu_ctrl (ALUControlE),
-        .y        (y),
+        .y        (y_int),
         .zero     (ZeroE)
     );
 
-    assign ALUResultE = y;
+    assign ALUResultE = y_int;
 
-    // ---------- Forwarding FP ----------
+    //---------- Forwarding FP ----------
     wire [1:0] FPForwardAE;
     wire [1:0] FPForwardBE;
 
@@ -150,8 +147,8 @@ module ex_stage (
     wire [4:0]  fp_flags;
 
     alu_fp fp_u (
-        .mode_fp    (1'b1),        // 1 = single 32 bits
-        .round_mode (2'b00),       // RNE
+        .mode_fp    (1'b1),       // 1 = single (32 bits)
+        .round_mode (2'b00),      // RNE
         .op_a       (fp_srcA),
         .op_b       (fp_srcB),
         .op_code    (ALUControlE),
@@ -159,13 +156,13 @@ module ex_stage (
         .flags      (fp_flags)
     );
 
-    assign FPResultE = IsFPAluE ? fp_res   : 32'd0;
-    assign FPFlagsE  = IsFPAluE ? fp_flags : 5'd0;
+    assign FPResultE = fp_res;
+    assign FPFlagsE  = fp_flags;
 
-    // dato que va a memoria: SW entero o FSW (FP)
+    // dato hacia memoria: SW entero o FSW FP
     assign WriteDataE = IsFSWE ? fp_srcB_store : srcB;
 
-    // ---------- branch / jump ----------
+    //---------- cálculo de PC ----------
     assign PCTargetE = PCE + ImmExtE;
     assign PCSrcE    = (BranchE & ZeroE) | JumpE;
 

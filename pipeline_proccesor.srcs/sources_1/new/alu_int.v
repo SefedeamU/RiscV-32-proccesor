@@ -1,12 +1,5 @@
-// -------------------------------------------------------------
-// ALU entera RV32I 
-// Operaciones soportadas por el pipeline:
-//   000: ADD   (ADDI, LW, SW, FLW, FSW, dirección de branch)
-//   001: SUB   (SUB, BEQ)
-//   010: AND   (ANDI)
-//   011: OR    (ORI)
-//   100: XOR   (XORI)
-// -------------------------------------------------------------
+// alu_int.v
+
 module alu_int (
     input  wire [31:0] a,
     input  wire [31:0] b,
@@ -16,14 +9,17 @@ module alu_int (
 );
     always @* begin
         case (alu_ctrl)
-            3'b000: y = a + b;  // ADD / ADDI / cargas / stores
-            3'b001: y = a - b;  // SUB / BEQ
-            3'b010: y = a & b;  // AND / ANDI
-            3'b011: y = a | b;  // OR / ORI
-            3'b100: y = a ^ b;  // XOR / XORI
+            3'b000: y = a + b;                            // ADD / dirección
+            3'b001: y = a - b;                            // SUB / BEQ
+            3'b010: y = a & b;                            // AND 
+            3'b011: y = a | b;                            // OR
+            3'b100: y = a ^ b;                            // XOR
+            3'b101: y = ($signed(a) < $signed(b)) ? 32'd1 : 32'd0; // SLT
+            3'b110: y = (a < b) ? 32'd1 : 32'd0;          // SLTU
             default: y = 32'd0;
         endcase
     end
 
-    assign zero = (y == 32'd0);   // usado en BEQ
+    assign zero = (y == 32'd0); // usado en BEQ
+
 endmodule

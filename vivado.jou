@@ -383,3 +383,106 @@ update_compile_order -fileset sources_1
 launch_simulation
 open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
 source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+current_wave_config {waveform.wcfg}
+add_wave {{/cpu_tb/DUT/ex_mem_reg/MemWriteM}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+current_wave_config {waveform.wcfg}
+add_wave {{/cpu_tb/DUT/dmem_u/mem}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+launch_simulation
+launch_simulation
+launch_simulation
+launch_simulation
+launch_simulation
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+current_wave_config {waveform.wcfg}
+add_wave {{/cpu_tb/DUT/ex_u/fp_res}} 
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg}
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl

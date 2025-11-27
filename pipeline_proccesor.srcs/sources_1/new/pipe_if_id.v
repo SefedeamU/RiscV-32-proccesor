@@ -1,5 +1,4 @@
-// Registro pipeline IF/ID
-// Inserta NOP cuando hay reset o flush (branch/jump).
+// pipe_if_id.v
 
 module pipe_if_id (
     input  wire        clk,

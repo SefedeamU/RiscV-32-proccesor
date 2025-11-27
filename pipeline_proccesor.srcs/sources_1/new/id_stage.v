@@ -1,11 +1,11 @@
-// id_stage.v - Etapa ID
+// id_stage.v
 
 module id_stage (
     input  wire        clk,
     input  wire        reset,
 
-    input  wire [31:0] PCD,       // PC en etapa D (no usado en lógica actual)
-    input  wire [31:0] InstrD,    // instrucción en ID
+    input  wire [31:0] PCD,
+    input  wire [31:0] InstrD,
 
     // Write-back entero
     input  wire        RegWriteW,
@@ -58,7 +58,7 @@ module id_stage (
     assign Rs1D = InstrD[19:15];
     assign Rs2D = InstrD[24:20];
 
-    // Índices FP (mapeo directo como en RISC-V F)
+    // Índices FP 
     assign FRdD  = InstrD[11:7];
     assign FRs1D = InstrD[19:15];
     assign FRs2D = InstrD[24:20];
@@ -87,10 +87,9 @@ module id_stage (
         .rd2 (FRD2D)
     );
 
-
     // Generador de inmediatos
     wire [1:0] ImmSrcD_int;
-    assign ImmSrcD = ImmSrcD_int;  
+    assign ImmSrcD = ImmSrcD_int;
 
     immgen imm_u (
         .instr   (InstrD),
@@ -98,12 +97,11 @@ module id_stage (
         .ImmExtD (ImmExtD)
     );
 
-
-    // Unidad de control principal (entero + FP)
-    wire [1:0] ALUOpD;
-
+    // Unidad de control principal 
     controller ctrl_u (
         .opcode      (opcode),
+        .funct3      (funct3),
+        .funct7      (funct7),
 
         // control entero
         .RegWriteD   (RegWriteD),
@@ -113,22 +111,13 @@ module id_stage (
         .JumpD       (JumpD),
         .ALUSrcD     (ALUSrcD),
         .ImmSrcD     (ImmSrcD_int),
-        .ALUOpD      (ALUOpD),
+        .ALUControlD (ALUControlD),
 
         // control FP
         .IsFPAluD    (IsFPAluD),
         .FPRegWriteD (FPRegWriteD),
         .IsFLWD      (IsFLWD),
         .IsFSWD      (IsFSWD)
-    );
-
-    // Decodificador de ALU (entera + FP)
-    alu_decoder dec_u (
-        .opcode      (opcode),
-        .funct3      (funct3),
-        .funct7      (funct7),
-        .ALUOpD      (ALUOpD),
-        .ALUControlD (ALUControlD)
     );
 
 endmodule

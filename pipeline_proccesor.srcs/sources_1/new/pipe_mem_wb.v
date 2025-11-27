@@ -1,4 +1,4 @@
-// Registro pipeline MEM/WB con señales entero + FP
+// pipe_mem_wb.v
 
 module pipe_mem_wb (
     input  wire        clk,

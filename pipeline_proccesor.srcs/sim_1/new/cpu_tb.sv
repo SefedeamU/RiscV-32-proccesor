@@ -1,3 +1,5 @@
+// cpu_tb.sv
+
 `timescale 1ns/1ps
 
 module cpu_tb;
@@ -18,10 +20,10 @@ module cpu_tb;
         reset = 1;
 
         // programa entero (instrucciones)
-        $readmemh("program.hex", DUT.imem_u.mem);
+        $readmemh("program.hex", DUT.if_u.imem_u.mem);
 
         // datos para pruebas de memoria / FP
-        $readmemh("data.hex", DUT.dmem_u.mem);
+        $readmemh("data.hex", DUT.mem_stage_u.dmem_u.mem);
 
         // mantener reset unos ciclos
         #20;
