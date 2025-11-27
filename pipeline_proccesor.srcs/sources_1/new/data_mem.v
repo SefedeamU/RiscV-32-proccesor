@@ -1,7 +1,7 @@
 // Memoria de datos palabra alineada
 
 module data_mem #(
-    parameter DEPTH = 1024
+    parameter DEPTH = 100
 ) (
     input  wire        clk,
     input  wire        we,

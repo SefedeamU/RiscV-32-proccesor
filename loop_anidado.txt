@@ -1,0 +1,69 @@
+    .text
+    .globl _start
+
+_start:
+    addi x10, x0, 0          # base A
+    addi x11, x0, 64         # base B
+    addi x12, x0, 128        # base C
+
+    addi x1,  x0, 2          # N = 2
+    addi x2,  x0, 0          # i = 0
+
+    # Punteros de fila y columnas
+    add  x5,  x10, x0        # x5 = Ap_row   (fila i de A)
+    add  x6,  x12, x0        # x6 = C_row    (fila i de C)
+    add  x7,  x11, x0        # x7 = Bcol0_ptr (columna 0 de B)
+    addi x8,  x11, 4         # x8 = Bcol1_ptr (columna 1 de B)
+
+loop_i:
+    beq  x2, x1, end_all     # if (i == N) -> fin
+
+    addi x3, x0, 0           # j = 0
+
+loop_j:
+    beq  x3, x1, next_i      # if (j == N) -> siguiente fila
+
+    # sum = 0.0 en f0
+    fsub.s f0, f0, f0
+
+    # Seleccionar columna de B según j
+    beq  x3, x0, use_col0    # si j == 0 -> columna 0
+    add  x9, x8, x0          # j == 1 -> usar Bcol1_ptr
+    jal  x0, do_mac
+
+use_col0:
+    add  x9, x7, x0          # usar Bcol0_ptr
+
+do_mac:
+    # k = 0
+    flw   f1, 0(x5)          # A[i][0]
+    flw   f2, 0(x9)          # B[0][j]
+    fmul.s f3, f1, f2
+    fadd.s f0, f0, f3
+
+    # k = 1
+    flw   f1, 4(x5)          # A[i][1]
+    flw   f2, 8(x9)          # B[1][j] 
+    fmul.s f3, f1, f2
+    fadd.s f0, f0, f3
+
+    # Guardar C[i][j]: C_row = C[i][0], offset = j*4
+    beq   x3, x0, store_c0
+    fsw   f0, 4(x6)          # C[i][1]
+    jal   x0, after_store
+
+store_c0:
+    fsw   f0, 0(x6)          # C[i][0]
+
+after_store:
+    addi  x3, x3, 1          # j++
+    jal   x0, loop_j
+
+next_i:
+    addi  x5, x5, 8          # Ap_row += 8 bytes 
+    addi  x6, x6, 8          # C_row  += 8 bytes 
+    addi  x2, x2, 1          # i++
+    jal   x0, loop_i
+
+end_all:
+    jal   x0, end_all

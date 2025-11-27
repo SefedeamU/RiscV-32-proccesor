@@ -2,7 +2,7 @@
 //  - Decodifica la instrucción
 //  - Lee bancos de registros entero y FP
 //  - Genera inmediatos
-//  - Obtiene señales de control entero + FP
+//  - Obtiene señales de control entero + FP + MATMUL.FP
 
 module id_stage (
     input  wire        clk,
@@ -50,7 +50,10 @@ module id_stage (
     output wire        IsFPAluD,
     output wire        FPRegWriteD,
     output wire        IsFLWD,
-    output wire        IsFSWD
+    output wire        IsFSWD,
+
+    // Control MATMUL.FP
+    output wire        IsMatmulD
 );
 
     // Campos de la instrucción
@@ -107,11 +110,13 @@ module id_stage (
         .ImmExtD (ImmExtD)
     );
 
-    // Unidad de control principal (entero + FP)
+    // Unidad de control principal (entero + FP + MATMUL)
     wire [1:0] ALUOpD;
 
     controller ctrl_u (
         .opcode      (opcode),
+        .funct3      (funct3),
+        .funct7      (funct7),
 
         // control entero
         .RegWriteD   (RegWriteD),
@@ -127,7 +132,10 @@ module id_stage (
         .IsFPAluD    (IsFPAluD),
         .FPRegWriteD (FPRegWriteD),
         .IsFLWD      (IsFLWD),
-        .IsFSWD      (IsFSWD)
+        .IsFSWD      (IsFSWD),
+
+        // control MATMUL
+        .IsMatmulD   (IsMatmulD)
     );
 
     // Decodificador de ALU entero/FP

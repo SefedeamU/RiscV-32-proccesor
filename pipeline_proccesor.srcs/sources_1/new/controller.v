@@ -1,11 +1,10 @@
 // controller.v
-// Unidad de control principal RV32I + FP
-//   - Genera control entero grueso (RegWrite, MemWrite, Branch, Jump...)
-//   - Genera ALUOpD para alu_decoder
-//   - Genera control FP (OP-FP, FLW, FSW)
+// Unidad de control principal RV32I + FP + MATMUL.FP (camino 2 con microsecuencia)
 
 module controller (
     input  wire [6:0] opcode,
+    input  wire [2:0] funct3,    // para distinguir MATMUL.FP dentro de OP-FP
+    input  wire [6:0] funct7,    // para distinguir MATMUL.FP dentro de OP-FP
 
     // control entero
     output reg        RegWriteD,
@@ -21,7 +20,10 @@ module controller (
     output reg        IsFPAluD,
     output reg        FPRegWriteD,
     output reg        IsFLWD,
-    output reg        IsFSWD
+    output reg        IsFSWD,
+
+    // control MATMUL.FP (pseudo-instrucción, camino 2)
+    output reg        IsMatmulD
 );
 
     // OpCodes básicos
@@ -34,7 +36,10 @@ module controller (
     localparam OP_LUI    = 7'b0110111; // LUI (tipo U)
     localparam OP_FLW    = 7'b0000111; // FLW
     localparam OP_FSW    = 7'b0100111; // FSW
-    localparam OP_FP     = 7'b1010011; // OP-FP (FADD/FMUL/FDIV/FSUB)
+    localparam OP_FP     = 7'b1010011; // OP-FP (FADD/FMUL/FDIV/FSUB/MATMUL)
+
+    // funct7 especial para MATMUL.FP (no se usa en otras FP)
+    localparam [6:0] F7_MATMUL = 7'b0100001;
 
     always @* begin
         // Valores por defecto = NOP
@@ -51,6 +56,7 @@ module controller (
         FPRegWriteD = 1'b0;
         IsFLWD      = 1'b0;
         IsFSWD      = 1'b0;
+        IsMatmulD   = 1'b0;
 
         case (opcode)
             // ---------------- Entero ----------------
@@ -96,7 +102,7 @@ module controller (
                 ALUSrcD    = 1'b1;  // usa ImmExt para PCTargetE en EX
                 JumpD      = 1'b1;  // selecciona PCTargetE
                 ResultSrcD = 2'b10; // PCPlus4W en WB
-                ImmSrcD    = 2'b11; //J/U (immgen decide J)
+                ImmSrcD    = 2'b11; // J/U (immgen decide J)
                 ALUOpD     = 2'b00;
             end
 
@@ -127,8 +133,16 @@ module controller (
 
             // ---------------- OP-FP ----------------
             OP_FP: begin
-                FPRegWriteD = 1'b1;
-                IsFPAluD    = 1'b1;
+                // MATMUL.FP: pseudo-instrucción con microsecuencia interna
+                if ((funct7 == F7_MATMUL) && (funct3 == 3'b000)) begin
+                    IsMatmulD = 1'b1;
+                    // No se escribe ninguna FP register aquí, el trabajo
+                    // lo hará el microsecuenciador con micro-ops FLW/FMUL/FADD/FSW.
+                end else begin
+                    // OP-FP normal: FADD/FMUL/FDIV/FSUB
+                    FPRegWriteD = 1'b1;
+                    IsFPAluD    = 1'b1;
+                end
             end
 
             default: ;

@@ -1,0 +1,13 @@
+.global _start
+    .text
+    .globl _start
+
+_start:
+
+    addi x10, x0, 0      # base A = 0
+    addi x11, x0, 64     # base B = 64
+    addi x12, x0, 128    # base C = 128
+    .word 0x42B50653     # MATMUL.FP x12,x10,x11
+
+done:
+    j done               # loop infinito 

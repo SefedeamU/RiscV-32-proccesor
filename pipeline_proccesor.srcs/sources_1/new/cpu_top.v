@@ -1,5 +1,6 @@
 // cpu_top.v
-// Núcleo RV32I pipeline 5 etapas + extensión FP básica
+// Núcleo RV32I pipeline 5 etapas + extensión FP básica + MATMUL.FP (camino 2)
+
 module cpu_top (
     input  wire clk,
     input  wire reset
@@ -10,23 +11,31 @@ module cpu_top (
     wire [31:0] PCPlus4F;
     wire [31:0] InstrF;
     wire        StallF, StallD, FlushD, FlushE;
+    wire        StallF_hz, StallD_hz, FlushD_hz, FlushE_hz; // hazard puro
     wire        PCSrcE;
     wire [31:0] PCTargetE;
 
+    // Señales override de PC desde microsecuenciador MATMUL
+    wire        PCOverride;
+    wire [31:0] PCOverrideVal;
+
     if_stage if_u (
-        .clk       (clk),
-        .reset     (reset),
-        .StallF    (StallF),
-        .PCSrcE    (PCSrcE),
-        .PCTargetE (PCTargetE),
-        .PCF       (PCF),
-        .PCPlus4F  (PCPlus4F),
-        .InstrF    (InstrF)
+        .clk          (clk),
+        .reset        (reset),
+        .StallF       (StallF),
+        .PCSrcE       (PCSrcE),
+        .PCTargetE    (PCTargetE),
+        .PCOverride   (PCOverride),
+        .PCOverrideVal(PCOverrideVal),
+        .PCF          (PCF),
+        .PCPlus4F     (PCPlus4F),
+        .InstrF       (InstrF)
     );
 
     // ---------------- IF/ID ----------------
     wire [31:0] PCD;
-    wire [31:0] InstrD;
+    wire [31:0] InstrD_pipe;   // instrucción normal desde IF/ID
+    wire [31:0] InstrD_core;   // instrucción efectiva en ID (micro o normal)
 
     pipe_if_id if_id_reg (
         .clk    (clk),
@@ -36,7 +45,7 @@ module cpu_top (
         .PCF    (PCF),
         .InstrF (InstrF),
         .PCD    (PCD),
-        .InstrD (InstrD)
+        .InstrD (InstrD_pipe)
     );
 
     // ---------------- ID ----------------
@@ -58,6 +67,9 @@ module cpu_top (
     wire        FPRegWriteD;
     wire        IsFLWD, IsFSWD;
 
+    // Señal MATMUL desde ID
+    wire        IsMatmulD;
+
     // Señales WB entero
     wire        RegWriteW;
     wire [1:0]  ResultSrcW;
@@ -72,11 +84,24 @@ module cpu_top (
     wire [4:0]  FRdW;
     wire [31:0] FPResultOutW;
 
+    // Señales microsecuenciador
+    wire        micro_busy;
+    wire        micro_valid;
+    wire [31:0] micro_instr;
+
+    // PC+4 en D (PC de la instrucción siguiente a la de D)
+    wire [31:0] PCPlus4D = PCD + 32'd4;
+
+    // Mux de instrucción en D:
+    //  - si micro_valid=1, se usa la micro-instrucción generada
+    //  - si no, se usa la instrucción normal del IF/ID
+    assign InstrD_core = micro_valid ? micro_instr : InstrD_pipe;
+
     id_stage id_u (
         .clk         (clk),
         .reset       (reset),
         .PCD         (PCD),
-        .InstrD      (InstrD),
+        .InstrD      (InstrD_core),
 
         // WB entero
         .RegWriteW   (RegWriteW),
@@ -117,11 +142,11 @@ module cpu_top (
         .IsFPAluD    (IsFPAluD),
         .FPRegWriteD (FPRegWriteD),
         .IsFLWD      (IsFLWD),
-        .IsFSWD      (IsFSWD)
-    );
+        .IsFSWD      (IsFSWD),
 
-    // PC+4 en D
-    wire [31:0] PCPlus4D = PCD + 32'd4;
+        // MATMUL
+        .IsMatmulD   (IsMatmulD)
+    );
 
     // ---------------- Señales hacia E/M/W ----------------
 
@@ -175,12 +200,45 @@ module cpu_top (
         .IsFPAluD   (IsFPAluD),
         .IsFSWD     (IsFSWD),
 
-        // salidas
-        .StallF     (StallF),
-        .StallD     (StallD),
-        .FlushD     (FlushD),
-        .FlushE     (FlushE)
+        // salidas (hazard puro)
+        .StallF     (StallF_hz),
+        .StallD     (StallD_hz),
+        .FlushD     (FlushD_hz),
+        .FlushE     (FlushE_hz)
     );
+
+    // ---------------- Microsecuenciador MATMUL.FP ----------------
+
+    matmul_microseq matmul_u (
+        .clk          (clk),
+        .reset        (reset),
+        .start        (IsMatmulD & ~micro_busy), // dispara una vez por MATMUL
+        .stall        (StallD_hz),               // respeta stalls de ID
+        .pc_after     (PCPlus4D),                // PC+4 de la MATMUL
+        .baseA_reg    (Rs1D),
+        .baseB_reg    (Rs2D),
+        .baseC_reg    (RdD),
+        .busy         (micro_busy),
+        .micro_valid  (micro_valid),
+        .micro_instr  (micro_instr),
+        .PCOverride   (PCOverride),
+        .PCOverrideVal(PCOverrideVal)
+    );
+
+    // Stall/Flush globales:
+    //  - IF se estanca tanto por hazards como mientras dure MATMUL
+    //  - ID se estanca solo por hazards (debe seguir fluyendo para micro-ops)
+    assign StallF = StallF_hz | micro_busy;
+    assign StallD = StallD_hz;
+
+    // Para evitar que MATMUL pase a EX:
+    //   en el ciclo en que se detecta MATMUL (IsMatmulD=1 y micro_busy=0),
+    //   se flushea ID y EX (burbuja) y toma control el microsecuenciador.
+    wire FlushD_matmul = IsMatmulD & ~micro_busy;
+    wire FlushE_matmul = IsMatmulD & ~micro_busy;
+
+    assign FlushD = FlushD_hz | FlushD_matmul;
+    assign FlushE = FlushE_hz | FlushE_matmul;
 
     // ---------------- ID/EX ----------------
     pipe_id_ex id_ex_reg (
