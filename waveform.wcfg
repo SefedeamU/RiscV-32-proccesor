@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="92.757 ns"></ZoomStartTime>
-      <ZoomEndTime time="204.558 ns"></ZoomEndTime>
-      <Cursor1Time time="111.390 ns"></Cursor1Time>
+      <ZoomStartTime time="64.680 ns"></ZoomStartTime>
+      <ZoomEndTime time="225.081 ns"></ZoomEndTime>
+      <Cursor1Time time="147.700 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="176"></NameColumnWidth>
-      <ValueColumnWidth column_width="93"></ValueColumnWidth>
+      <ValueColumnWidth column_width="88"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="27" />
    <wvobject fp_name="/cpu_tb/clk" type="logic">
@@ -135,6 +135,14 @@
       <obj_property name="radix_fractionWidth">24</obj_property>
       <obj_property name="radix_otherWidth">8</obj_property>
    </wvobject>
+   <wvobject fp_name="/cpu_tb/DUT/ex_u/fp_res" type="array">
+      <obj_property name="ElementShortName">fp_res[31:0]</obj_property>
+      <obj_property name="ObjectShortName">fp_res[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
    <wvobject fp_name="/cpu_tb/DUT/wb_u/FPResultW" type="array">
       <obj_property name="ElementShortName">FPResultW[31:0]</obj_property>
       <obj_property name="ObjectShortName">FPResultW[31:0]</obj_property>
@@ -147,13 +155,5 @@
       <obj_property name="ElementShortName">FRdW[4:0]</obj_property>
       <obj_property name="ObjectShortName">FRdW[4:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/cpu_tb/DUT/ex_u/fp_res" type="array">
-      <obj_property name="ElementShortName">fp_res[31:0]</obj_property>
-      <obj_property name="ObjectShortName">fp_res[31:0]</obj_property>
-      <obj_property name="Radix">REALRADIX</obj_property>
-      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
-      <obj_property name="radix_fractionWidth">24</obj_property>
-      <obj_property name="radix_otherWidth">8</obj_property>
    </wvobject>
 </wave_config>

@@ -1,11 +1,15 @@
-// id_stage.v
+// id_stage.v - Etapa ID
+//  - Decodifica la instrucción
+//  - Lee bancos de registros entero y FP
+//  - Genera inmediatos
+//  - Obtiene señales de control entero + FP
 
 module id_stage (
     input  wire        clk,
     input  wire        reset,
 
-    input  wire [31:0] PCD,
-    input  wire [31:0] InstrD,
+    input  wire [31:0] PCD,       // PC en etapa D 
+    input  wire [31:0] InstrD,    // instrucción en ID
 
     // Write-back entero
     input  wire        RegWriteW,
@@ -54,11 +58,17 @@ module id_stage (
     wire [2:0] funct3 = InstrD[14:12];
     wire [6:0] funct7 = InstrD[31:25];
 
-    assign RdD  = InstrD[11:7];
-    assign Rs1D = InstrD[19:15];
-    assign Rs2D = InstrD[24:20];
+    // Detección de LUI (tipo U, no usa rs1 ni rs2)
+    wire is_lui = (opcode == 7'b0110111);
 
-    // Índices FP 
+    // Registros destino
+    assign RdD  = InstrD[11:7];
+
+    // Para instrucciones tipo U (LUI) no se usan rs1/rs2:
+    assign Rs1D = is_lui ? 5'd0 : InstrD[19:15];
+    assign Rs2D = is_lui ? 5'd0 : InstrD[24:20];
+
+    // Índices FP (solo relevantes para instrucciones FP)
     assign FRdD  = InstrD[11:7];
     assign FRs1D = InstrD[19:15];
     assign FRs2D = InstrD[24:20];
@@ -89,7 +99,7 @@ module id_stage (
 
     // Generador de inmediatos
     wire [1:0] ImmSrcD_int;
-    assign ImmSrcD = ImmSrcD_int;
+    assign ImmSrcD = ImmSrcD_int;  
 
     immgen imm_u (
         .instr   (InstrD),
@@ -97,11 +107,11 @@ module id_stage (
         .ImmExtD (ImmExtD)
     );
 
-    // Unidad de control principal 
+    // Unidad de control principal (entero + FP)
+    wire [1:0] ALUOpD;
+
     controller ctrl_u (
         .opcode      (opcode),
-        .funct3      (funct3),
-        .funct7      (funct7),
 
         // control entero
         .RegWriteD   (RegWriteD),
@@ -111,13 +121,22 @@ module id_stage (
         .JumpD       (JumpD),
         .ALUSrcD     (ALUSrcD),
         .ImmSrcD     (ImmSrcD_int),
-        .ALUControlD (ALUControlD),
+        .ALUOpD      (ALUOpD),
 
         // control FP
         .IsFPAluD    (IsFPAluD),
         .FPRegWriteD (FPRegWriteD),
         .IsFLWD      (IsFLWD),
         .IsFSWD      (IsFSWD)
+    );
+
+    // Decodificador de ALU entero/FP
+    alu_decoder dec_u (
+        .opcode      (opcode),
+        .funct3      (funct3),
+        .funct7      (funct7),
+        .ALUOpD      (ALUOpD),
+        .ALUControlD (ALUControlD)
     );
 
 endmodule

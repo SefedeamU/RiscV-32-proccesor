@@ -486,3 +486,17 @@ launch_simulation
 launch_simulation
 open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
 source cpu_tb.tcl
+save_wave_config {C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg}
+close_sim
+launch_simulation
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
+close_sim
+launch_simulation
+open_wave_config C:/Users/Juan/Desktop/RiscV-32-proccesor/waveform.wcfg
+source cpu_tb.tcl
