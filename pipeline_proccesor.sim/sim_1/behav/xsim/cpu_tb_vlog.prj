@@ -8,10 +8,10 @@ verilog xil_defaultlib  --include "D:/2025.1/Vivado/data/rsb/busdef" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/decoder.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/ex_stage.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/forwarding_unit.v" \
-"../../../../../ARQUI-FINAL/project_6.srcs/sources_1/new/fp_addsubb.v" \
-"../../../../../ARQUI-FINAL/project_6.srcs/sources_1/new/fp_div.v" \
+"../../../../pipeline_proccesor.srcs/sources_1/new/fp_addsubb.v" \
+"../../../../pipeline_proccesor.srcs/sources_1/new/fp_div.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/fp_forwarding_unit.v" \
-"../../../../../ARQUI-FINAL/project_6.srcs/sources_1/new/fp_mul.v" \
+"../../../../pipeline_proccesor.srcs/sources_1/new/fp_mul.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/hazard_unit.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/id_stage.v" \
 "../../../../pipeline_proccesor.srcs/sources_1/new/if_stage.v" \

@@ -1,10 +1,10 @@
 // controller.v
-// Unidad de control principal RV32I + FP + MATMUL.FP (camino 2 con microsecuencia)
+// Unidad de control principal RV32I + FP + MATMUL.FP 
 
 module controller (
     input  wire [6:0] opcode,
-    input  wire [2:0] funct3,    // para distinguir MATMUL.FP dentro de OP-FP
-    input  wire [6:0] funct7,    // para distinguir MATMUL.FP dentro de OP-FP
+    input  wire [2:0] funct3,    
+    input  wire [6:0] funct7,   
 
     // control entero
     output reg        RegWriteD,
@@ -22,7 +22,7 @@ module controller (
     output reg        IsFLWD,
     output reg        IsFSWD,
 
-    // control MATMUL.FP (pseudo-instrucción, camino 2)
+    // control MATMUL.FP (pseudo-instrucción)
     output reg        IsMatmulD
 );
 

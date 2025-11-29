@@ -1,9 +1,10 @@
 // pipe_id_ex.v
+// Registro ID/EX con flushE
 
 module pipe_id_ex (
     input  wire        clk,
     input  wire        reset,
-    input  wire        flush,    // FlushE
+    input  wire        flushE,    
 
     // control desde D (entero)
     input  wire        RegWriteD,
@@ -67,7 +68,7 @@ module pipe_id_ex (
 );
 
     always @(posedge clk) begin
-        if (reset || flush) begin
+        if (reset || flushE) begin
             // control entero
             RegWriteE   <= 1'b0;
             ResultSrcE  <= 2'b00;

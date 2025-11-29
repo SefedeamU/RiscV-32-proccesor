@@ -1,11 +1,4 @@
 // immgen.v - Generador de inmediatos RV32I
-// ImmSrcD:
-//   00: I-type   (ADDI, LW, FLW, etc.)
-//   01: S-type   (SW, FSW)
-//   10: B-type   (BEQ)
-//   11: J/U-type:
-//        - JAL   (J-type) -> salto relativo
-//        - LUI   (U-type) -> imm[31:12] << 12
 
 module immgen (
     input  wire [31:0] instr,

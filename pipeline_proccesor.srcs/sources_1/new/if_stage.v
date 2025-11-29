@@ -1,5 +1,5 @@
 // if_stage.v
-// Etapa IF con soporte de branch/jump y override de PC para microsecuencia MATMUL
+// Etapa IF con soporte de branch/jump y override de PC para MATMUL
 
 module if_stage (
     input  wire        clk,
@@ -10,7 +10,7 @@ module if_stage (
     input  wire        PCSrcE,       // branch/jump tomado desde EX
     input  wire [31:0] PCTargetE,    // destino calculado en EX
 
-    // override desde microsecuenciador (para saltar a PC+4 de MATMUL)
+    // override desde microsecuenciador MATMUL
     input  wire        PCOverride,   // 1 => usar PCOverrideVal
     input  wire [31:0] PCOverrideVal,
 
@@ -22,10 +22,10 @@ module if_stage (
     // PC + 4
     wire [31:0] pc_plus4  = PCF + 32'd4;
 
-    // selección normal: branch/jump tomado o secuencial
+    // selección normal (branch/jump o secuencial)
     wire [31:0] pc_br_jmp = PCSrcE ? PCTargetE : pc_plus4;
 
-    // selección final: microsecuenciador puede forzar PC (PCOverride)
+    // selección final: microsecuenciador puede forzar PC
     wire [31:0] pc_next   = PCOverride ? PCOverrideVal : pc_br_jmp;
 
     // registro de PC
@@ -38,7 +38,7 @@ module if_stage (
 
     assign PCPlus4F = pc_plus4;
 
-    // Memoria de instrucciones interna
+    // Memoria de instrucciones
     instr_mem imem_u (
         .a  (PCF),
         .rd (InstrF)

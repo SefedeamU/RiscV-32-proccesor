@@ -1,5 +1,5 @@
 // cpu_top.v
-// Núcleo RV32I pipeline 5 etapas + extensión FP básica + MATMUL.FP (camino 2)
+// Núcleo RV32I pipeline 5 etapas + FP + MATMUL.FP (camino 2, microsecuencia)
 
 module cpu_top (
     input  wire clk,
@@ -11,11 +11,10 @@ module cpu_top (
     wire [31:0] PCPlus4F;
     wire [31:0] InstrF;
     wire        StallF, StallD, FlushD, FlushE;
-    wire        StallF_hz, StallD_hz, FlushD_hz, FlushE_hz; // hazard puro
     wire        PCSrcE;
     wire [31:0] PCTargetE;
 
-    // Señales override de PC desde microsecuenciador MATMUL
+    // override de PC desde microsecuenciador
     wire        PCOverride;
     wire [31:0] PCOverrideVal;
 
@@ -40,13 +39,16 @@ module cpu_top (
     pipe_if_id if_id_reg (
         .clk    (clk),
         .reset  (reset),
-        .en     (~StallD),
-        .flush  (FlushD),
+        .stallD (StallD),
+        .flushD (FlushD),
         .PCF    (PCF),
         .InstrF (InstrF),
         .PCD    (PCD),
         .InstrD (InstrD_pipe)
     );
+
+    // PC+4 en D (para pasar a microsecuenciador)
+    wire [31:0] PCPlus4D = PCD + 32'd4;
 
     // ---------------- ID ----------------
     // Camino entero
@@ -89,12 +91,7 @@ module cpu_top (
     wire        micro_valid;
     wire [31:0] micro_instr;
 
-    // PC+4 en D (PC de la instrucción siguiente a la de D)
-    wire [31:0] PCPlus4D = PCD + 32'd4;
-
-    // Mux de instrucción en D:
-    //  - si micro_valid=1, se usa la micro-instrucción generada
-    //  - si no, se usa la instrucción normal del IF/ID
+    // Mux de instrucción en D (micro-op o normal)
     assign InstrD_core = micro_valid ? micro_instr : InstrD_pipe;
 
     id_stage id_u (
@@ -149,7 +146,6 @@ module cpu_top (
     );
 
     // ---------------- Señales hacia E/M/W ----------------
-
     // ID/EX -> EX (entero)
     wire        RegWriteE, MemWriteE, BranchE, JumpE, ALUSrcE;
     wire [1:0]  ResultSrcE;
@@ -181,7 +177,9 @@ module cpu_top (
     wire [31:0] FPResultM;
     wire [4:0]  FRdM;
 
-    // ---------------- Hazard unit (enteros + FP) ----------------
+    // Hazard puro
+    wire StallF_hz, StallD_hz, FlushD_hz, FlushE_hz;
+
     hazard_unit hz_u (
         // entero
         .Rs1D       (Rs1D),
@@ -200,7 +198,7 @@ module cpu_top (
         .IsFPAluD   (IsFPAluD),
         .IsFSWD     (IsFSWD),
 
-        // salidas (hazard puro)
+        // salidas
         .StallF     (StallF_hz),
         .StallD     (StallD_hz),
         .FlushD     (FlushD_hz),
@@ -208,13 +206,12 @@ module cpu_top (
     );
 
     // ---------------- Microsecuenciador MATMUL.FP ----------------
-
     matmul_microseq matmul_u (
         .clk          (clk),
         .reset        (reset),
-        .start        (IsMatmulD & ~micro_busy), // dispara una vez por MATMUL
-        .stall        (StallD_hz),               // respeta stalls de ID
-        .pc_after     (PCPlus4D),                // PC+4 de la MATMUL
+        .start        (IsMatmulD & ~micro_busy), 
+        .stall        (StallD_hz),
+        .pc_after     (PCPlus4D),
         .baseA_reg    (Rs1D),
         .baseB_reg    (Rs2D),
         .baseC_reg    (RdD),
@@ -225,15 +222,14 @@ module cpu_top (
         .PCOverrideVal(PCOverrideVal)
     );
 
-    // Stall/Flush globales:
-    //  - IF se estanca tanto por hazards como mientras dure MATMUL
-    //  - ID se estanca solo por hazards (debe seguir fluyendo para micro-ops)
+    // Stall/Flush globales
+    // IF se estanca por hazard o mientras dure MATMUL
     assign StallF = StallF_hz | micro_busy;
+    // ID solo por hazard (debe seguir fluyendo con micro-ops)
     assign StallD = StallD_hz;
 
-    // Para evitar que MATMUL pase a EX:
-    //   en el ciclo en que se detecta MATMUL (IsMatmulD=1 y micro_busy=0),
-    //   se flushea ID y EX (burbuja) y toma control el microsecuenciador.
+    // Para evitar que MATMUL entre a EX:
+    // En el ciclo en que se detecta MATMUL en ID, se hace flush de D y E.
     wire FlushD_matmul = IsMatmulD & ~micro_busy;
     wire FlushE_matmul = IsMatmulD & ~micro_busy;
 
@@ -244,7 +240,7 @@ module cpu_top (
     pipe_id_ex id_ex_reg (
         .clk         (clk),
         .reset       (reset),
-        .flush       (FlushE),
+        .flushE      (FlushE),
 
         // control entero
         .RegWriteD   (RegWriteD),
@@ -451,14 +447,12 @@ module cpu_top (
 
     // ---------------- WB ----------------
     wb_stage wb_u (
-        // entero
         .ResultSrcW    (ResultSrcW),
         .ReadDataW     (ReadDataW),
         .ALUResultW    (ALUResultW),
         .PCPlus4W      (PCPlus4W),
         .ResultW       (ResultW),
 
-        // FP
         .IsFLWW        (IsFLWW),
         .IsFPAluW      (IsFPAluW),
         .FPResultW_in  (FPResultW),
