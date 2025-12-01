@@ -1,4 +1,3 @@
-.global _start
     .text
     .globl _start
 
@@ -10,4 +9,14 @@ _start:
     .word 0x42B50653     # MATMUL.FP x12,x10,x11
 
 done:
-    j done               # loop infinito 
+    j done   
+dsadasd            # loop infinito 
+
+
+
+machine:
+00000513
+04000593
+08000613
+42b50653
+0000006f
